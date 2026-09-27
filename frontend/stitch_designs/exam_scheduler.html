@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"tertiary":"#004c76","error-container":"#ffdad6","surface-container":"#eaedff","on-tertiary-container":"#bedfff","on-secondary":"#ffffff","on-surface":"#131b2e","surface":"#faf8ff","outline-variant":"#c7c4d8","inverse-surface":"#283044","primary":"#3525cd","surface-container-highest":"#dae2fd","on-error-container":"#93000a","inverse-primary":"#c3c0ff","surface-tint":"#4d44e3","surface-container-lowest":"#ffffff","on-secondary-fixed-variant":"#00504a","on-primary-fixed":"#0f0069","on-tertiary-fixed":"#001d31","on-surface-variant":"#464555","tertiary-container":"#00659a","primary-fixed-dim":"#c3c0ff","on-tertiary-fixed-variant":"#004b73","on-error":"#ffffff","surface-variant":"#dae2fd","secondary-container":"#99efe5","secondary":"#006a63","secondary-fixed":"#9cf2e8","on-background":"#131b2e","surface-bright":"#faf8ff","primary-fixed":"#e2dfff","surface-container-high":"#e2e7ff","surface-dim":"#d2d9f4","surface-container-low":"#f2f3ff","tertiary-fixed-dim":"#93ccff","secondary-fixed-dim":"#80d5cb","on-primary-fixed-variant":"#3323cc","primary-container":"#4f46e5","background":"#faf8ff","on-secondary-fixed":"#00201d","on-primary-container":"#dad7ff","on-primary":"#ffffff","on-secondary-container":"#006f67","tertiary-fixed":"#cce5ff","inverse-on-surface":"#eef0ff","error":"#ba1a1a","outline":"#777587","on-tertiary":"#ffffff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"gutter":"1.5rem","gutter-mobile":"0.75rem","space-xs":"0.25rem","space-sm":"0.5rem","margin-mobile":"1rem","space-lg":"1.5rem","space-xl":"2rem","space-md":"1rem","margin":"2rem"},"fontFamily":{"headline-lg-mobile":["Inter"],"headline-sm":["Inter"],"timer-display":["JetBrains Mono"],"display":["Inter"],"body-md":["Inter"],"code-formula":["JetBrains Mono"],"body-sm":["Inter"],"body-lg":["Inter"],"headline-md":["Inter"],"label-md":["Inter"],"headline-lg":["Inter"],"display-mobile":["Inter"],"label-sm":["Inter"]},"fontSize":{"headline-lg-mobile":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}],"timer-display":["22px",{"lineHeight":"28px","letterSpacing":"0.02em","fontWeight":"600"}],"display":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"26px","fontWeight":"400"}],"code-formula":["15px",{"lineHeight":"24px","fontWeight":"500"}],"body-sm":["14px",{"lineHeight":"22px","fontWeight":"400"}],"body-lg":["18px",{"lineHeight":"30px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],"label-md":["13px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"500"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"display-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.015em","fontWeight":"700"}],"label-sm":["11px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between"><div class="flex flex-col"><div class="h-16 px-space-lg flex items-center justify-between bg-surface-container-lowest"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">school</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface leading-tight tracking-tight">TeraExam</span><span class="font-label-sm text-label-sm text-outline">SaaS Engine v4.2</span></div></div><span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded bg-surface-container-high text-on-surface font-semibold">V2</span></div><div class="px-space-md py-space-sm"><div class="p-space-sm bg-surface-container-low rounded-lg flex flex-col gap-1"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm uppercase text-outline">Branch Scope</span><span class="w-2 h-2 rounded-full bg-secondary"></span></div><span class="font-label-md text-label-md text-on-surface font-semibold truncate">JEE / NEET / UPSC Wing</span><span class="font-label-sm text-label-sm text-on-surface-variant font-code-formula text-code-formula">APEX-DEL-049</span></div></div><nav class="flex flex-col gap-space-xs px-space-md mt-space-xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg shadow-sm"><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group focus:outline-none focus:ring-2 focus:ring-primary" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">space_dashboard</span><span class="font-label-md text-label-md">Dashboard</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group focus:outline-none focus:ring-2 focus:ring-primary" data-path="question-bank-studio" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">quiz</span><span class="font-label-md text-label-md">Question Bank Studio</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-2.5 transition-all group focus:outline-none focus:ring-2 focus:ring-primary bg-primary-container text-on-primary-container font-semibold rounded-lg shadow-sm" data-path="exam-scheduler" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">calendar_month</span><span class="font-label-md text-label-md">Exam Scheduler</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group focus:outline-none focus:ring-2 focus:ring-primary" data-path="live-analytics-and-leaderboard" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">monitoring</span><span class="font-label-md text-label-md">Live Analytics &amp; Leaderboard</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group focus:outline-none focus:ring-2 focus:ring-primary" data-path="student-roster-and-batches" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">groups</span><span class="font-label-md text-label-md">Student Roster &amp; Batches</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group focus:outline-none focus:ring-2 focus:ring-primary" data-path="institute-branding-settings" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">tune</span><span class="font-label-md text-label-md">Institute Branding Settings</span></a></nav></div><div class="p-space-md"><div class="p-space-md bg-surface-container-low rounded-xl flex items-center justify-between"><div class="flex flex-col"><span class="font-label-sm text-label-sm text-outline">System Status</span><span class="font-label-md text-label-md text-secondary font-semibold flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>Nodes Synced</span></div><span class="font-code-formula text-code-formula text-on-surface-variant text-[12px]">99.98%</span></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded bg-primary-fixed flex items-center justify-center"><span class="material-symbols-outlined text-on-primary-fixed text-[18px]">verified</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface leading-snug">Apex National Institute</span><span class="font-label-sm text-label-sm text-on-surface-variant">JEE / NEET / UPSC Division • <span class="font-code-formula text-code-formula">APEX-DEL-049</span></span></div></div><div class="h-7 w-px bg-outline-variant hidden lg:block"></div><span class="hidden lg:inline-flex items-center px-space-sm py-1 rounded bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold uppercase tracking-wider">Enterprise Tier</span><div class="hidden xl:flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-medium"><span class="w-2 h-2 rounded-full bg-error animate-ping"></span><span>Live JEE Main Mock • 4,281 Active</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center p-1 bg-surface-container-low rounded-lg"><button class="px-space-sm py-1 rounded font-label-sm text-label-sm bg-surface-container-lowest text-primary font-semibold shadow-sm" type="button">Educator Admin</button><button class="px-space-sm py-1 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">Candidate</button></div><div class="hidden sm:flex flex-col text-right font-timer-display text-label-sm bg-surface-container-low px-space-sm py-1 rounded text-on-surface"><span class="leading-none">14:32:08 UTC</span><span class="text-outline leading-tight">20:02:08 IST</span></div><button class="w-9 h-9 rounded-lg hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors focus:outline-none focus:ring-2 focus:ring-primary" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden 2xl:flex flex-col"><span class="font-label-md text-label-md text-on-surface leading-tight font-semibold">Dr. R. K. Sharma</span><span class="font-label-sm text-label-sm text-outline leading-tight">Chief Exam Controller</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="px-space-xl py-space-lg flex flex-col gap-space-lg">
+<!-- Top Action & Analytics Bar -->
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Exam Control Engine</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">Active Cycle 2025</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-lg text-headline-lg text-on-surface">Test Scheduler &amp; Deployment Hub</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-code-formula text-label-sm">8 Synchronized Slots</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm">
+<div class="flex items-center bg-surface-container-low p-1 rounded-lg">
+<button class="px-space-md py-1.5 rounded-md font-label-md text-label-md bg-surface-container-lowest text-primary font-semibold shadow-sm flex items-center gap-1.5 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">view_timeline</span>
+            Scheduled &amp; Live
+          </button>
+<button class="px-space-md py-1.5 rounded-md font-label-md text-label-md text-on-surface-variant hover:text-on-surface flex items-center gap-1.5 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">task_alt</span>
+            Graded &amp; Concluded
+          </button>
+<button class="px-space-md py-1.5 rounded-md font-label-md text-label-md text-on-surface-variant hover:text-on-surface flex items-center gap-1.5 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">drafts</span>
+            Draft Staging (3)
+          </button>
+</div>
+<button class="px-space-md py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-space-xs shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary" id="openWizardBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>Schedule New Exam</span>
+</button>
+</div>
+</div>
+<!-- Quick Vital Metrics Cards (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Simultaneous Candidates</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">group</span>
+</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display text-display text-on-surface font-timer-display">12,840</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +14.2%
+          </span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-outline font-label-sm text-label-sm">
+<span>Concurrency Capacity</span>
+<span class="font-code-formula text-code-formula text-on-surface-variant">64.2% Loaded</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Active Lockstep Tests</span>
+<span class="w-8 h-8 rounded-lg bg-secondary-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">sensors</span>
+</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display text-display text-on-surface font-timer-display">4</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-error-container text-on-error-container font-semibold animate-pulse">2 Critical JEE</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-outline font-label-sm text-label-sm">
+<span>Next Launch</span>
+<span class="font-code-formula text-code-formula text-on-surface-variant">In 42 Mins</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Integrity Audit Index</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display text-display text-on-surface font-timer-display">99.88%</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Nominal</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-outline font-label-sm text-label-sm">
+<span>Flagged Incidents</span>
+<span class="font-code-formula text-code-formula text-error font-semibold">12 Browser Exits</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Average Attendance</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">co_present</span>
+</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display text-display text-on-surface font-timer-display">91.4%</span>
+<span class="font-label-sm text-label-sm text-outline">Across Batches</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-outline font-label-sm text-label-sm">
+<span>Registered Pool</span>
+<span class="font-code-formula text-code-formula text-on-surface-variant">14,050 Enrolled</span>
+</div>
+</div>
+</div>
+<!-- Filters & Search Toolbar -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-wrap items-center gap-space-sm">
+<div class="relative min-w-[280px]">
+<span class="material-symbols-outlined text-outline text-[18px] absolute left-3 top-1/2 -translate-y-1/2">search</span>
+<input class="w-full pl-9 pr-space-md py-2 bg-surface-container-low rounded-lg text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary placeholder-outline placeholder:text-label-sm" placeholder="Search by Exam title, batch, or code..." type="text"/>
+</div>
+<div class="flex items-center gap-1.5 p-1 bg-surface-container-low rounded-lg">
+<button class="px-space-sm py-1 rounded font-label-sm text-label-sm bg-surface-container-lowest text-primary font-semibold shadow-sm" type="button">All Sectors</button>
+<button class="px-space-sm py-1 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface" type="button">JEE Main/Adv</button>
+<button class="px-space-sm py-1 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface" type="button">NEET-UG</button>
+<button class="px-space-sm py-1 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface" type="button">UPSC Prelims</button>
+</div>
+<div class="h-6 w-px bg-surface-container-high hidden md:block"></div>
+<button class="flex items-center gap-1 px-space-sm py-1.5 bg-surface-container-low hover:bg-surface-container-high rounded-lg text-on-surface-variant font-label-sm text-label-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+<span>Target Cohort</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="flex items-center gap-1 px-space-sm py-1.5 bg-surface-container-low hover:bg-surface-container-high rounded-lg text-on-surface-variant font-label-sm text-label-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">sort</span>
+<span>Sort: Slot Start</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="flex items-center gap-1.5 px-space-md py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Export Master CSV</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors" title="Sync All Node States" type="button">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+</button>
+</div>
+</div>
+<!-- Master Exam Data Grid -->
+<div class="rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-outline font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3 px-space-md">Exam Description &amp; Target Cohort</th>
+<th class="py-3 px-space-md">Code</th>
+<th class="py-3 px-space-md">Window &amp; Duration</th>
+<th class="py-3 px-space-md">Pattern &amp; Marking</th>
+<th class="py-3 px-space-md">Question Matrix</th>
+<th class="py-3 px-space-md">Registrations &amp; Turnout</th>
+<th class="py-3 px-space-md">Execution State</th>
+<th class="py-3 px-space-md text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high">
+<!-- Row 1: JEE Advanced Mock (Live) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">AITS Mock Test 06 - Full Syllabus JEE Advanced</span>
+</div>
+<div class="mt-1 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold">IIT Super-30</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Batch Alpha Apex</span>
+<span class="text-outline font-label-sm text-label-sm">• Shift 01</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<span class="font-code-formula text-code-formula text-primary font-semibold">TX-JEE-ADV-06</span>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">timelapse</span>
+                    180 Mins (3.0 Hrs)
+                  </span>
+<span class="font-label-sm text-label-sm text-outline">Mar 15, 09:00 AM - 12:00 PM IST</span>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">300 Marks • (+4/-1)</span>
+<div class="flex items-center gap-1 text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Negative Marking On</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">75 Questions Total</span>
+<span class="font-label-sm text-label-sm text-outline font-code-formula">25 Phy | 25 Chem | 25 Math</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="w-48 flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface font-semibold">3,820 / 4,500</span>
+<span class="text-secondary font-semibold">84.8%</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 84.8%"></div>
+</div>
+<span class="text-outline font-label-sm text-label-sm">680 Unattended / En Route</span>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+                  Live Examination
+                </span>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap text-right">
+<div class="relative inline-block text-left">
+<div class="flex items-center justify-end gap-1">
+<a class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors" href="#" title="Candidate Monitor">
+<span class="material-symbols-outlined text-[20px]">tv</span>
+</a>
+<a class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors" href="#" title="Manage Questions">
+<span class="material-symbols-outlined text-[20px]">edit_note</span>
+</a>
+<button class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" onclick="toggleMenu('menu-row-1')" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-container-lowest rounded-xl shadow-xl z-20 py-1 text-left" id="menu-row-1">
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">analytics</span> Live Proctor Dashboard
+                    </a>
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">leaderboard</span> View Current Standings
+                    </a>
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">download</span> Export Session Logs
+                    </a>
+<div class="h-px bg-surface-container-high my-1"></div>
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-error hover:bg-error-container/20" href="#">
+<span class="material-symbols-outlined text-[18px]">emergency_home</span> Emergency Freeze
+                    </a>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 2: NEET Rank Booster Test (Scheduled) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">NEET Rank Booster Test 14 - Medical Diagnostics</span>
+<div class="mt-1 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold">NEET Elite Wing</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Class 12 Regulars</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<span class="font-code-formula text-code-formula text-primary font-semibold">TX-NEET-RB-14</span>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">timelapse</span>
+                    200 Mins (3.3 Hrs)
+                  </span>
+<span class="font-label-sm text-label-sm text-outline">Mar 16, 02:00 PM - 05:20 PM IST</span>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">720 Marks • (+4/-1)</span>
+<div class="flex items-center gap-1 text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Negative Marking On</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">200 Qs (180 to Attempt)</span>
+<span class="font-label-sm text-label-sm text-outline font-code-formula">Phy 45 | Chem 45 | Bio 90</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="w-48 flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface font-semibold">6,120 Registered</span>
+<span class="text-outline font-code-formula">Pre-Allocated</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 100%"></div>
+</div>
+<span class="text-outline font-label-sm text-label-sm">Seat Allocation Complete</span>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                  Scheduled &amp; Sealed
+                </span>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap text-right">
+<div class="relative inline-block text-left">
+<div class="flex items-center justify-end gap-1">
+<a class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors" href="#" title="Review Test Keys">
+<span class="material-symbols-outlined text-[20px]">key</span>
+</a>
+<a class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors" href="#" title="Manage Paper">
+<span class="material-symbols-outlined text-[20px]">quiz</span>
+</a>
+<button class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" onclick="toggleMenu('menu-row-2')" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-container-lowest rounded-xl shadow-xl z-20 py-1 text-left" id="menu-row-2">
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">group_add</span> Manage Enrolled Batches
+                    </a>
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">schedule</span> Reschedule Window
+                    </a>
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">settings_backup_restore</span> Test Paper Audit Log
+                    </a>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 3: UPSC Prelims GS Mock 03 (Grading) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">UPSC Prelims GS Mock 03 - National Benchmark Paper</span>
+<div class="mt-1 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">Civil Services IAS 2025</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">All Centres</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<span class="font-code-formula text-code-formula text-primary font-semibold">TX-UPSC-GS-03</span>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">timelapse</span>
+                    120 Mins (2.0 Hrs)
+                  </span>
+<span class="font-label-sm text-label-sm text-outline">Concluded Mar 14, 05:00 PM</span>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">200 Marks • (+2/-0.66)</span>
+<div class="flex items-center gap-1 text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>1/3rd Negative Deduction</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">100 Objective Questions</span>
+<span class="font-label-sm text-label-sm text-outline font-code-formula">Polity • Econ • Env • Sci</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="w-48 flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface font-semibold">2,910 / 3,100</span>
+<span class="text-primary font-semibold">93.8%</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 93.8%"></div>
+</div>
+<span class="text-outline font-label-sm text-label-sm">Submissions Locked</span>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px] animate-spin">refresh</span>
+                  Grading OCR &amp; Telemetry
+                </span>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap text-right">
+<div class="relative inline-block text-left">
+<div class="flex items-center justify-end gap-1">
+<a class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors" href="#" title="Normalization Curves">
+<span class="material-symbols-outlined text-[20px]">show_chart</span>
+</a>
+<a class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors" href="#" title="Discrepancy Matrix">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</a>
+<button class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" onclick="toggleMenu('menu-row-3')" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-container-lowest rounded-xl shadow-xl z-20 py-1 text-left" id="menu-row-3">
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">publish</span> Publish Answer Key
+                    </a>
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">rule</span> Challenge Grievances (4)
+                    </a>
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">download_for_offline</span> Download Bulk OMR Data
+                    </a>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 4: JEE Main State Level Booster (Results Published) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-4 px-space-md">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">State Scholastic JEE Main Pre-Qualifier Mock 09</span>
+<div class="mt-1 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold">Open All-India</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">North Zone 14</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<span class="font-code-formula text-code-formula text-primary font-semibold">TX-JEE-M-09</span>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">timelapse</span>
+                    180 Mins (3.0 Hrs)
+                  </span>
+<span class="font-label-sm text-label-sm text-outline">Concluded Mar 12</span>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">300 Marks • (+4/-1)</span>
+<div class="flex items-center gap-1 text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Negative Marking On</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">90 Questions (75 Mandatory)</span>
+<span class="font-label-sm text-label-sm text-outline font-code-formula">Phy 30 | Chem 30 | Math 30</span>
+</div>
+</td>
+<td class="py-4 px-space-md">
+<div class="w-48 flex flex-col gap-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface font-semibold">9,412 / 10,200</span>
+<span class="text-secondary font-semibold">92.2%</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 92.2%"></div>
+</div>
+<span class="text-outline font-label-sm text-label-sm">Final Ranks Computed</span>
+</div>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-secondary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                  Results Published
+                </span>
+</td>
+<td class="py-4 px-space-md whitespace-nowrap text-right">
+<div class="relative inline-block text-left">
+<div class="flex items-center justify-end gap-1">
+<a class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors" href="#" title="View Merit List">
+<span class="material-symbols-outlined text-[20px]">military_tech</span>
+</a>
+<a class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors" href="#" title="Candidate Scorecards">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</a>
+<button class="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" onclick="toggleMenu('menu-row-4')" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+<div class="hidden absolute right-0 mt-2 w-48 bg-surface-container-lowest rounded-xl shadow-xl z-20 py-1 text-left" id="menu-row-4">
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">format_list_numbered</span> All-India Rank Roster
+                    </a>
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">file_open</span> Question Difficulty Report
+                    </a>
+<a class="flex items-center gap-2 px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-[18px]">forward_to_inbox</span> Push Result SMS to Parents
+                    </a>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination & Footprint -->
+<div class="px-space-md py-space-sm bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-space-sm font-label-sm text-label-sm text-outline">
+<div class="flex items-center gap-space-sm">
+<span>Showing 4 of 28 Exams</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Database Engine Latency: 14ms</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<span class="px-2.5 py-1 rounded bg-surface-container-lowest text-primary font-semibold shadow-sm">1</span>
+<button class="px-2.5 py-1 rounded hover:bg-surface-container-high text-on-surface-variant" type="button">2</button>
+<button class="px-2.5 py-1 rounded hover:bg-surface-container-high text-on-surface-variant" type="button">3</button>
+<span class="px-1 text-outline">...</span>
+<button class="px-2.5 py-1 rounded hover:bg-surface-container-high text-on-surface-variant" type="button">7</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Visual Distribution Chart & Proctor Audit Track -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-md">
+<!-- Real-time Exam Slot Distribution Chart -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm lg:col-span-2 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Weekly Concurrency Bandwidth &amp; Session Load</span>
+<span class="font-label-sm text-label-sm text-outline">Projected candidate load across morning, noon, and evening slots</span>
+</div>
+<span class="font-code-formula text-code-formula text-label-sm text-secondary bg-secondary-fixed px-2 py-0.5 rounded font-semibold">Live Feed</span>
+</div>
+<!-- Inline SVG Multi-bar Schedule Load Chart -->
+<div class="my-space-md w-full">
+<svg class="w-full h-36" preserveaspectratio="none" viewbox="0 0 700 150">
+<!-- Grid Lines -->
+<line stroke="#eaedff" stroke-width="1" x1="0" x2="700" y1="30" y2="30"></line>
+<line stroke="#eaedff" stroke-width="1" x1="0" x2="700" y1="70" y2="70"></line>
+<line stroke="#eaedff" stroke-width="1" x1="0" x2="700" y1="110" y2="110"></line>
+<!-- Day Columns: Mon -->
+<rect fill="#dae2fd" height="60" rx="3" width="28" x="35" y="60"></rect>
+<rect fill="#4f46e5" height="80" rx="3" width="28" x="67" y="40"></rect>
+<text fill="#777587" font-family="Inter" font-size="11" text-anchor="middle" x="65" y="136">Mon (10)</text>
+<!-- Tue -->
+<rect fill="#dae2fd" height="45" rx="3" width="28" x="135" y="75"></rect>
+<rect fill="#4f46e5" height="65" rx="3" width="28" x="167" y="55"></rect>
+<text fill="#777587" font-family="Inter" font-size="11" text-anchor="middle" x="165" y="136">Tue (11)</text>
+<!-- Wed -->
+<rect fill="#dae2fd" height="75" rx="3" width="28" x="235" y="45"></rect>
+<rect fill="#4f46e5" height="95" rx="3" width="28" x="267" y="25"></rect>
+<text fill="#777587" font-family="Inter" font-size="11" text-anchor="middle" x="265" y="136">Wed (12)</text>
+<!-- Thu -->
+<rect fill="#dae2fd" height="30" rx="3" width="28" x="335" y="90"></rect>
+<rect fill="#4f46e5" height="50" rx="3" width="28" x="367" y="70"></rect>
+<text fill="#777587" font-family="Inter" font-size="11" text-anchor="middle" x="365" y="136">Thu (13)</text>
+<!-- Fri -->
+<rect fill="#dae2fd" height="70" rx="3" width="28" x="435" y="50"></rect>
+<rect fill="#4f46e5" height="90" rx="3" width="28" x="467" y="30"></rect>
+<text fill="#777587" font-family="Inter" font-size="11" text-anchor="middle" x="465" y="136">Fri (14)</text>
+<!-- Sat (Peak JEE) -->
+<rect fill="#006a63" height="90" rx="3" width="28" x="535" y="30"></rect>
+<rect fill="#ba1a1a" height="105" rx="3" width="28" x="567" y="15"></rect>
+<text fill="#ba1a1a" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle" x="565" y="136">Sat (15 Peak)</text>
+<!-- Sun (Peak NEET) -->
+<rect fill="#006a63" height="100" rx="3" width="28" x="635" y="20"></rect>
+<rect fill="#4f46e5" height="92" rx="3" width="28" x="667" y="28"></rect>
+<text fill="#777587" font-family="Inter" font-size="11" text-anchor="middle" x="665" y="136">Sun (16)</text>
+</svg>
+</div>
+<div class="flex flex-wrap items-center justify-between pt-space-xs text-outline font-label-sm text-label-sm">
+<div class="flex items-center gap-space-md">
+<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-primary-container"></span>Morning Shift (09:00 - 12:00)</span>
+<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-surface-variant"></span>Afternoon Shift (14:00 - 17:00)</span>
+<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-error"></span>Peak Capacity Alert</span>
+</div>
+<span class="font-code-formula text-code-formula text-on-surface-variant">Max Headroom: 16,500 Nodes</span>
+</div>
+</div>
+<!-- Proctoring & Node Integrity Panel -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Proctoring Telemetry</span>
+<span class="font-label-sm text-label-sm text-outline">Real-time anti-cheat trigger rate</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-[22px]">security</span>
+</div>
+<div class="py-space-md flex flex-col gap-space-sm">
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Tab Switch Lock</span>
+</div>
+<span class="font-code-formula text-code-formula text-label-sm text-on-surface-variant">42 Intercepts</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Dual Monitor Blocker</span>
+</div>
+<span class="font-code-formula text-code-formula text-label-sm text-on-surface-variant">9 Intercepts</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Webcam AI Anomalies</span>
+</div>
+<span class="font-code-formula text-code-formula text-label-sm text-error font-semibold">3 Escalations</span>
+</div>
+</div>
+<button class="w-full py-2 bg-surface-container-high hover:bg-surface-variant text-on-surface rounded-lg font-label-md text-label-md font-semibold flex items-center justify-center gap-1 transition-colors" type="button">
+<span>Open Full Telemetry Terminal</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Embedded Drawer / Modal: Create Exam Wizard -->
+<div class="hidden fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm flex justify-end transition-opacity" id="createExamDrawer">
+<div class="w-full max-w-2xl bg-surface-container-lowest h-full shadow-xl flex flex-col justify-between overflow-y-auto">
+<!-- Wizard Top Header -->
+<div class="px-space-xl py-space-lg bg-surface-container-lowest sticky top-0 z-10 shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">assignment_add</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface">Create Exam Wizard</span>
+<span class="font-label-sm text-label-sm text-outline">Configure schedule parameters, anti-cheat locks &amp; cohort targeting</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center transition-colors" id="closeWizardBtn" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Wizard Form Body -->
+<div class="px-space-xl py-space-md flex flex-col gap-space-lg">
+<!-- Step Indicator -->
+<div class="grid grid-cols-3 gap-2">
+<div class="h-1 rounded bg-primary"></div>
+<div class="h-1 rounded bg-primary"></div>
+<div class="h-1 rounded bg-surface-container-high"></div>
+</div>
+<!-- Section 1: Basic Identifiers -->
+<div class="flex flex-col gap-space-md">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">1. Core Specification</span>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Exam Title</label>
+<input class="w-full px-space-md py-2.5 bg-surface-container-low rounded-lg text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary" type="text" value="AITS National Test Series 07 - Mechanics &amp; Electrodynamics"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Exam Pattern Category</label>
+<select class="w-full px-space-md py-2.5 bg-surface-container-low rounded-lg text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary">
+<option selected="">JEE Advanced (Multi-Section)</option>
+<option>JEE Main (NTA Standard)</option>
+<option>NEET-UG (Medical 200 Qs)</option>
+<option>UPSC Civil Services Prelims (Paper-I)</option>
+<option>Custom Institute Standard</option>
+</select>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Generated Exam Code</label>
+<input class="w-full px-space-md py-2.5 bg-surface-container rounded-lg text-outline font-code-formula text-code-formula" readonly="" type="text" value="TX-JEE-ADV-07"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Target Candidate Cohorts</label>
+<div class="flex flex-wrap gap-2">
+<label class="flex items-center gap-2 px-space-sm py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md cursor-pointer">
+<input checked="" class="rounded text-primary focus:ring-0" type="checkbox"/>
+<span>Batch Alpha (Del-049)</span>
+</label>
+<label class="flex items-center gap-2 px-space-sm py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md cursor-pointer">
+<input checked="" class="rounded text-primary focus:ring-0" type="checkbox"/>
+<span>Batch Super-30 Pinnacle</span>
+</label>
+<label class="flex items-center gap-2 px-space-sm py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md cursor-pointer">
+<input class="rounded text-primary focus:ring-0" type="checkbox"/>
+<span>Dropper Crash Course 2025</span>
+</label>
+<label class="flex items-center gap-2 px-space-sm py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md cursor-pointer">
+<input class="rounded text-primary focus:ring-0" type="checkbox"/>
+<span>External Open Registration</span>
+</label>
+</div>
+</div>
+</div>
+<div class="h-px bg-surface-container-high"></div>
+<!-- Section 2: Window & Live Duration Calculator -->
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">2. Slot Allocation &amp; Timing</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock_clock</span> Lockstep Window
+            </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Start Window</label>
+<input class="w-full px-space-md py-2 bg-surface-container-low rounded-lg text-on-surface font-code-formula text-body-sm focus:outline-none focus:ring-2 focus:ring-primary" type="text" value="2025-03-22 09:00 AM"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Expiry Window</label>
+<input class="w-full px-space-md py-2 bg-surface-container-low rounded-lg text-on-surface font-code-formula text-body-sm focus:outline-none focus:ring-2 focus:ring-primary" type="text" value="2025-03-22 12:00 PM"/>
+</div>
+</div>
+<!-- Dynamic Duration & Marks Computed Box -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-space-sm">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Live Schema Computed Output</span>
+<div class="grid grid-cols-3 gap-space-sm text-center">
+<div class="p-space-sm rounded-lg bg-surface-container-lowest">
+<span class="font-label-sm text-label-sm text-outline block">Calculated Duration</span>
+<span class="font-timer-display text-headline-sm text-primary font-semibold">180 Mins</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-lowest">
+<span class="font-label-sm text-label-sm text-outline block">Total Questions</span>
+<span class="font-timer-display text-headline-sm text-on-surface font-semibold">75 Items</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-lowest">
+<span class="font-label-sm text-label-sm text-outline block">Aggregate Score</span>
+<span class="font-timer-display text-headline-sm text-secondary font-semibold">300 Marks</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-outline font-label-sm text-label-sm px-1">
+<span>Sectional Cap: Physics (100) + Chemistry (100) + Mathematics (100)</span>
+<span class="font-code-formula text-code-formula text-primary font-semibold">+4 / -1 Scheme</span>
+</div>
+</div>
+</div>
+<div class="h-px bg-surface-container-high"></div>
+<!-- Section 3: Proctoring & Cheating Defenses -->
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">3. Exam Shield &amp; Proctoring</span>
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">Strict NTA Protocol</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex flex-col pr-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Full-Screen Browser Lock</span>
+<span class="font-label-sm text-label-sm text-outline">Auto-disqualify after 3 window blur events</span>
+</div>
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0" type="checkbox"/>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex flex-col pr-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Randomize Question Order</span>
+<span class="font-label-sm text-label-sm text-outline">Unique candidate seed sequence</span>
+</div>
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0" type="checkbox"/>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex flex-col pr-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Randomize Option Shuffling</span>
+<span class="font-label-sm text-label-sm text-outline">Permute (A, B, C, D) keys per student</span>
+</div>
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0" type="checkbox"/>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex flex-col pr-2">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Webhook Proctor Telemetry</span>
+<span class="font-label-sm text-label-sm text-outline">Stream audio/video flags to central NOC</span>
+</div>
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0" type="checkbox"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Wizard Sticky Action Bottom Footer -->
+<div class="p-space-lg bg-surface-container-lowest sticky bottom-0 shadow-lg flex items-center justify-between">
+<button class="px-space-md py-2 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-md text-label-md transition-colors" id="cancelWizardBtn" type="button">
+          Cancel Setup
+        </button>
+<div class="flex items-center gap-space-sm">
+<button class="px-space-md py-2 rounded-lg bg-surface-container text-primary hover:bg-surface-container-high font-label-md text-label-md font-semibold transition-colors" type="button">
+            Save as Draft
+          </button>
+<button class="px-space-lg py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary flex items-center gap-1.5" onclick="alert('Exam TX-JEE-ADV-07 successfully locked and scheduled!')" type="button">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Publish &amp; Dispatch Exam</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+    // Simple micro-interactions for Drawer and Action Dropdowns
+    const drawer = document.getElementById('createExamDrawer');
+    const openBtn = document.getElementById('openWizardBtn');
+    const closeBtn = document.getElementById('closeWizardBtn');
+    const cancelBtn = document.getElementById('cancelWizardBtn');
+
+    function openWizard() {
+      if (drawer) drawer.classList.remove('hidden');
+    }
+
+    function closeWizard() {
+      if (drawer) drawer.classList.add('hidden');
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openWizard);
+    if (closeBtn) closeBtn.addEventListener('click', closeWizard);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeWizard);
+
+    function toggleMenu(menuId) {
+      const menu = document.getElementById(menuId);
+      if (!menu) return;
+      
+      // Close other opened menus
+      document.querySelectorAll('[id^="menu-row-"]').forEach(el => {
+        if (el.id !== menuId) el.classList.add('hidden');
+      });
+
+      menu.classList.toggle('hidden');
+    }
+
+    // Dismiss popovers on outside click
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('[id^="menu-row-"]') && !e.target.closest('button[onclick^="toggleMenu"]')) {
+        document.querySelectorAll('[id^="menu-row-"]').forEach(el => el.classList.add('hidden'));
+      }
+    });
+  </script>
+</div></main></div></body></html>

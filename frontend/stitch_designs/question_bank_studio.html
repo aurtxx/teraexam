@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"tertiary":"#004c76","error-container":"#ffdad6","surface-container":"#eaedff","on-tertiary-container":"#bedfff","on-secondary":"#ffffff","on-surface":"#131b2e","surface":"#faf8ff","outline-variant":"#c7c4d8","inverse-surface":"#283044","primary":"#3525cd","surface-container-highest":"#dae2fd","on-error-container":"#93000a","inverse-primary":"#c3c0ff","surface-tint":"#4d44e3","surface-container-lowest":"#ffffff","on-secondary-fixed-variant":"#00504a","on-primary-fixed":"#0f0069","on-tertiary-fixed":"#001d31","on-surface-variant":"#464555","tertiary-container":"#00659a","primary-fixed-dim":"#c3c0ff","on-tertiary-fixed-variant":"#004b73","on-error":"#ffffff","surface-variant":"#dae2fd","secondary-container":"#99efe5","secondary":"#006a63","secondary-fixed":"#9cf2e8","on-background":"#131b2e","surface-bright":"#faf8ff","primary-fixed":"#e2dfff","surface-container-high":"#e2e7ff","surface-dim":"#d2d9f4","surface-container-low":"#f2f3ff","tertiary-fixed-dim":"#93ccff","secondary-fixed-dim":"#80d5cb","on-primary-fixed-variant":"#3323cc","primary-container":"#4f46e5","background":"#faf8ff","on-secondary-fixed":"#00201d","on-primary-container":"#dad7ff","on-primary":"#ffffff","on-secondary-container":"#006f67","tertiary-fixed":"#cce5ff","inverse-on-surface":"#eef0ff","error":"#ba1a1a","outline":"#777587","on-tertiary":"#ffffff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"gutter":"1.5rem","gutter-mobile":"0.75rem","space-xs":"0.25rem","space-sm":"0.5rem","margin-mobile":"1rem","space-lg":"1.5rem","space-xl":"2rem","space-md":"1rem","margin":"2rem"},"fontFamily":{"headline-lg-mobile":["Inter"],"headline-sm":["Inter"],"timer-display":["JetBrains Mono"],"display":["Inter"],"body-md":["Inter"],"code-formula":["JetBrains Mono"],"body-sm":["Inter"],"body-lg":["Inter"],"headline-md":["Inter"],"label-md":["Inter"],"headline-lg":["Inter"],"display-mobile":["Inter"],"label-sm":["Inter"]},"fontSize":{"headline-lg-mobile":["20px",{"lineHeight":"28px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}],"timer-display":["22px",{"lineHeight":"28px","letterSpacing":"0.02em","fontWeight":"600"}],"display":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"26px","fontWeight":"400"}],"code-formula":["15px",{"lineHeight":"24px","fontWeight":"500"}],"body-sm":["14px",{"lineHeight":"22px","fontWeight":"400"}],"body-lg":["18px",{"lineHeight":"30px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"600"}],"label-md":["13px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"500"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"display-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.015em","fontWeight":"700"}],"label-sm":["11px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between"><div class="flex flex-col"><div class="h-16 px-space-lg flex items-center justify-between bg-surface-container-lowest"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">school</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface leading-tight tracking-tight">TeraExam</span><span class="font-label-sm text-label-sm text-outline">SaaS Engine v4.2</span></div></div><span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded bg-surface-container-high text-on-surface font-semibold">V2</span></div><div class="px-space-md py-space-sm"><div class="p-space-sm bg-surface-container-low rounded-lg flex flex-col gap-1"><div class="flex items-center justify-between"><span class="font-label-sm text-label-sm uppercase text-outline">Branch Scope</span><span class="w-2 h-2 rounded-full bg-secondary"></span></div><span class="font-label-md text-label-md text-on-surface font-semibold truncate">JEE / NEET / UPSC Wing</span><span class="font-label-sm text-label-sm text-on-surface-variant font-code-formula text-code-formula">APEX-DEL-049</span></div></div><nav class="flex flex-col gap-space-xs px-space-md mt-space-xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg shadow-sm"><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group focus:outline-none focus:ring-2 focus:ring-primary" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">space_dashboard</span><span class="font-label-md text-label-md">Dashboard</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-2.5 transition-all group focus:outline-none focus:ring-2 focus:ring-primary bg-primary-container text-on-primary-container font-semibold rounded-lg shadow-sm" data-path="question-bank-studio" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">quiz</span><span class="font-label-md text-label-md">Question Bank Studio</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group focus:outline-none focus:ring-2 focus:ring-primary" data-path="exam-scheduler" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">calendar_month</span><span class="font-label-md text-label-md">Exam Scheduler</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group focus:outline-none focus:ring-2 focus:ring-primary" data-path="live-analytics-and-leaderboard" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">monitoring</span><span class="font-label-md text-label-md">Live Analytics &amp; Leaderboard</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group focus:outline-none focus:ring-2 focus:ring-primary" data-path="student-roster-and-batches" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">groups</span><span class="font-label-md text-label-md">Student Roster &amp; Batches</span></a><a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all group focus:outline-none focus:ring-2 focus:ring-primary" data-path="institute-branding-settings" href="#"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-on-surface">tune</span><span class="font-label-md text-label-md">Institute Branding Settings</span></a></nav></div><div class="p-space-md"><div class="p-space-md bg-surface-container-low rounded-xl flex items-center justify-between"><div class="flex flex-col"><span class="font-label-sm text-label-sm text-outline">System Status</span><span class="font-label-md text-label-md text-secondary font-semibold flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>Nodes Synced</span></div><span class="font-code-formula text-code-formula text-on-surface-variant text-[12px]">99.98%</span></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded bg-primary-fixed flex items-center justify-center"><span class="material-symbols-outlined text-on-primary-fixed text-[18px]">verified</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface leading-snug">Apex National Institute</span><span class="font-label-sm text-label-sm text-on-surface-variant">JEE / NEET / UPSC Division • <span class="font-code-formula text-code-formula">APEX-DEL-049</span></span></div></div><div class="h-7 w-px bg-outline-variant hidden lg:block"></div><span class="hidden lg:inline-flex items-center px-space-sm py-1 rounded bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold uppercase tracking-wider">Enterprise Tier</span><div class="hidden xl:flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-medium"><span class="w-2 h-2 rounded-full bg-error animate-ping"></span><span>Live JEE Main Mock • 4,281 Active</span></div></div><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center p-1 bg-surface-container-low rounded-lg"><button class="px-space-sm py-1 rounded font-label-sm text-label-sm bg-surface-container-lowest text-primary font-semibold shadow-sm" type="button">Educator Admin</button><button class="px-space-sm py-1 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">Candidate</button></div><div class="hidden sm:flex flex-col text-right font-timer-display text-label-sm bg-surface-container-low px-space-sm py-1 rounded text-on-surface"><span class="leading-none">14:32:08 UTC</span><span class="text-outline leading-tight">20:02:08 IST</span></div><button class="w-9 h-9 rounded-lg hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors focus:outline-none focus:ring-2 focus:ring-primary" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden 2xl:flex flex-col"><span class="font-label-md text-label-md text-on-surface leading-tight font-semibold">Dr. R. K. Sharma</span><span class="font-label-sm text-label-sm text-outline leading-tight">Chief Exam Controller</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="p-space-lg max-w-[1720px] mx-auto w-full space-y-space-lg">
+<!-- Top Action / Metric Strip -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs text-outline text-label-sm font-label-sm uppercase tracking-wider">
+<span>Curriculum Library</span>
+<span>/</span>
+<span class="text-primary font-semibold">Verified Master Bank</span>
+<span class="ml-space-xs px-2 py-0.5 rounded bg-surface-container-high text-on-surface text-label-sm font-code-formula">84,912 Items</span>
+</div>
+<div class="flex items-baseline gap-space-md mt-1">
+<h1 class="text-headline-lg font-headline-lg text-on-surface">Question Bank Studio</h1>
+<span class="text-body-sm font-body-sm text-on-surface-variant hidden md:inline">Synchronized with NTA 2025 Test Matrix</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm">
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md transition-all shadow-sm" id="openBulkImportBtn" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">upload_file</span>
+<span>Bulk CSV / Word Import</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-secondary-container hover:bg-secondary-fixed text-on-secondary-container font-label-md transition-all shadow-sm" id="openExportDrawerBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">playlist_add_check</span>
+<span>Export Selected (<span id="selectedCountBadge">2</span>)</span>
+</button>
+<button class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md font-semibold transition-all shadow-sm" id="openNewQuestionBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>+ New Question</span>
+</button>
+</div>
+</div>
+<!-- Filter Control Dock -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm space-y-space-md">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-sm">
+<!-- Subject Selector -->
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Subject Wing</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low text-on-surface text-body-sm font-body-sm rounded-lg px-3 py-2 pr-8 focus:bg-surface-container-lowest focus:outline-none">
+<option selected="">Physics (General &amp; Advanced)</option>
+<option>Chemistry (Organic &amp; Physical)</option>
+<option>Mathematics</option>
+<option>Zoology</option>
+<option>Botany</option>
+<option>General Studies (UPSC GS-1)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Exam Pattern -->
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Exam Blueprint</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low text-on-surface text-body-sm font-body-sm rounded-lg px-3 py-2 pr-8 focus:bg-surface-container-lowest focus:outline-none">
+<option>All Blueprints</option>
+<option selected="">JEE Advanced (Paper 1 &amp; 2)</option>
+<option>JEE Main (NTA Standard)</option>
+<option>NEET-UG (NMC Strict)</option>
+<option>UPSC CSE Prelims</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Question Type -->
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Archetype</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low text-on-surface text-body-sm font-body-sm rounded-lg px-3 py-2 pr-8 focus:bg-surface-container-lowest focus:outline-none">
+<option>All Types</option>
+<option>Single Choice MCQ</option>
+<option selected="">Multiple Correct</option>
+<option>Numerical Value [Integer/Decimal]</option>
+<option>Matrix Match (List I/II)</option>
+<option>Assertion-Reason</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Difficulty Level -->
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Caliber</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-low text-on-surface text-body-sm font-body-sm rounded-lg px-3 py-2 pr-8 focus:bg-surface-container-lowest focus:outline-none">
+<option>Any Difficulty</option>
+<option>Foundational (NCERT Direct)</option>
+<option>Moderate (Standard Entrance)</option>
+<option selected="">Advanced Olympiad (Tier 1)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Live Search -->
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Lookup Keyword / Stems</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">search</span>
+<input class="w-full bg-surface-container-low text-on-surface text-body-sm font-body-sm rounded-lg pl-9 pr-3 py-2 placeholder:text-outline focus:bg-surface-container-lowest focus:outline-none" placeholder="e.g. Carnot Cycle, Rotational..." type="text" value="Maxwell Ampere circulating field"/>
+</div>
+</div>
+</div>
+<!-- Quick Tag Filter Pills -->
+<div class="flex flex-wrap items-center gap-space-xs pt-space-xs">
+<span class="text-label-sm font-label-sm text-outline mr-2">Active Tags:</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+<span>Electrodynamics</span>
+<button class="text-outline hover:text-on-surface leading-none" type="button">×</button>
+</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+<span>Displacement Current</span>
+<button class="text-outline hover:text-on-surface leading-none" type="button">×</button>
+</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+<span>NCERT Exemplar + Adv 2021</span>
+<button class="text-outline hover:text-on-surface leading-none" type="button">×</button>
+</span>
+<button class="text-primary hover:text-primary-container font-label-sm text-label-sm underline ml-2" type="button">Clear All (3)</button>
+</div>
+</div>
+<!-- Main Question Cards Container -->
+<div class="space-y-space-lg">
+<!-- ==================== QUESTION 1 (JEE Advanced Multi-Correct) ==================== -->
+<article class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<!-- Header Metadata Strip -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low p-space-sm rounded-lg">
+<div class="flex flex-wrap items-center gap-space-sm">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0" type="checkbox"/>
+<span class="font-code-formula text-code-formula text-primary font-semibold">QID-ADV-89104</span>
+</label>
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold">JEE Advanced</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">Physics • Electrodynamics</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-medium">Multiple Correct (Partial +4, -2)</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">Advanced Olympiad</span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">history</span> Avg. Solve: 3m 42s</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">percent</span> Accuracy: 31.4%</span>
+<button class="p-1 rounded hover:bg-surface-container-high text-outline hover:text-on-surface" title="Edit Question" type="button">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-outline hover:text-on-surface" title="Bookmark" type="button">
+<span class="material-symbols-outlined text-[18px]">bookmark</span>
+</button>
+</div>
+</div>
+<!-- Problem Stem with LaTeX & Diagram Preview -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<div class="xl:col-span-8 space-y-space-md">
+<div class="text-body-lg font-body-lg text-on-surface leading-relaxed">
+<p>
+                A parallel-plate capacitor with circular plates of radius <span class="font-code-formula text-code-formula text-primary font-semibold">R</span> is being charged by a steady external current source <span class="font-code-formula text-code-formula text-primary font-semibold">I(t) = I_0</span>. At a distance <span class="font-code-formula text-code-formula">r</span> from the central axis of symmetry between the plates (where <span class="font-code-formula text-code-formula">r &lt; R</span>), the generalized Ampère-Maxwell law applies:
+              </p>
+</div>
+<!-- LaTeX Display Card -->
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="font-code-formula text-code-formula text-primary text-[17px] tracking-wide overflow-x-auto py-1">
+                ∮ <span class="font-bold">B̅</span> · d<span class="font-bold">l̅</span> = μ₀ ( I<sub class="text-label-sm">enc</sub> + ε₀ <span class="inline-flex flex-col text-center align-middle mx-1 text-sm"><span class="border-b border-outline pb-0.5">dΦ<sub class="text-[10px]">E</sub></span><span class="pt-0.5">dt</span></span> )
+              </div>
+<div class="px-space-sm py-1 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm shrink-0">
+                Eq. Ref: Ampère-Maxwell Generalized
+              </div>
+</div>
+<p class="text-body-md font-body-md text-on-surface leading-relaxed">
+              Neglecting fringing effects at the boundaries of the circular plates, which of the following statements is/are <strong class="text-error">TRUE</strong> regarding the induced magnetic induction vector <span class="font-code-formula text-code-formula">B̅(r, t)</span> and the Poynting flux vector <span class="font-code-formula text-code-formula">S̅</span> into the dielectric cylinder?
+            </p>
+<!-- Multiple Choice Grid Options -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm pt-space-xs">
+<!-- Option A (Correct) -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-sm shadow-sm relative group cursor-pointer">
+<span class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-md text-label-md font-semibold shrink-0">A</span>
+<div class="flex flex-col gap-1 text-on-surface">
+<span class="text-body-sm font-body-sm font-medium">Inside the plates (<span class="font-code-formula text-code-formula">r ≤ R</span>), the magnitude of the magnetic field scales linearly as <span class="font-code-formula text-code-formula text-primary">B(r) = (μ₀ I_0 r) / (2π R²)</span>.</span>
+<span class="inline-flex items-center gap-1 text-secondary font-label-sm text-label-sm font-semibold mt-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> Correct Key (Answered 78%)
+                  </span>
+</div>
+</div>
+<!-- Option B (Correct) -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-sm shadow-sm relative group cursor-pointer">
+<span class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-md text-label-md font-semibold shrink-0">B</span>
+<div class="flex flex-col gap-1 text-on-surface">
+<span class="text-body-sm font-body-sm font-medium">The direction of the Poynting vector <span class="font-code-formula text-code-formula text-primary">S̅ = (1/μ₀) (E̅ × B̅)</span> is directed radially inward toward the central axis everywhere across the boundary.</span>
+<span class="inline-flex items-center gap-1 text-secondary font-label-sm text-label-sm font-semibold mt-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> Correct Key (Answered 64%)
+                  </span>
+</div>
+</div>
+<!-- Option C (Incorrect) -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-sm shadow-sm opacity-85 group cursor-pointer">
+<span class="w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md font-semibold shrink-0">C</span>
+<div class="flex flex-col gap-1 text-on-surface">
+<span class="text-body-sm font-body-sm">The conduction current density inside the region strictly equals the displacement current density, such that <span class="font-code-formula text-code-formula">J_c = J_d ≠ 0</span> everywhere in the vacuum gap.</span>
+<span class="text-outline font-label-sm text-label-sm mt-1">Distractor Key (Chosen by 32%)</span>
+</div>
+</div>
+<!-- Option D (Correct) -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-sm shadow-sm relative group cursor-pointer">
+<span class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-md text-label-md font-semibold shrink-0">D</span>
+<div class="flex flex-col gap-1 text-on-surface">
+<span class="text-body-sm font-body-sm font-medium">Total energy flow rate per unit time across the cylindrical perimeter of radius <span class="font-code-formula text-code-formula">R</span> matches the instantaneous rate of electrostatic energy storage <span class="font-code-formula text-code-formula">d/dt (½ C V²)</span>.</span>
+<span class="inline-flex items-center gap-1 text-secondary font-label-sm text-label-sm font-semibold mt-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> Correct Key (Answered 41%)
+                  </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Question Diagram Schematic & Lab Card -->
+<div class="xl:col-span-4 bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm font-semibold uppercase tracking-wider text-outline">Figure P-104.B: Vector Projection</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface text-label-sm font-code-formula">High-Res Vector</span>
+</div>
+<!-- Technical SVG Schematic -->
+<div class="w-full bg-surface-container-lowest rounded-lg p-space-md flex items-center justify-center">
+<svg class="w-full h-auto max-h-[220px]" fill="none" stroke="currentColor" viewbox="0 0 340 220">
+<!-- Circular capacitor plates in 3D projection -->
+<ellipse class="text-outline-variant" cx="170" cy="55" fill="#eaedff" fill-opacity="0.4" rx="100" ry="32" stroke-width="2"></ellipse>
+<ellipse class="text-outline-variant" cx="170" cy="165" fill="#eaedff" fill-opacity="0.4" rx="100" ry="32" stroke-width="2"></ellipse>
+<!-- Central axis line -->
+<line class="text-outline" stroke-dasharray="4 4" stroke-width="1.5" x1="170" x2="170" y1="20" y2="200"></line>
+<!-- Displacement current flux lines -->
+<line class="text-primary" marker-end="url(#arrow)" stroke-width="1.5" x1="130" x2="130" y1="58" y2="162"></line>
+<line class="text-primary" stroke-width="2" x1="170" x2="170" y1="58" y2="162"></line>
+<line class="text-primary" stroke-width="1.5" x1="210" x2="210" y1="58" y2="162"></line>
+<!-- Induced B Field Ring -->
+<ellipse class="text-secondary" cx="170" cy="110" rx="60" ry="18" stroke-dasharray="2 2" stroke-width="2"></ellipse>
+<!-- Poynting Vector inward arrows -->
+<path class="text-error" d="M 230 110 L 195 110" stroke-width="2"></path>
+<polygon fill="#ba1a1a" points="195,107 187,110 195,113"></polygon>
+<path class="text-error" d="M 110 110 L 145 110" stroke-width="2"></path>
+<polygon fill="#ba1a1a" points="145,107 153,110 145,113"></polygon>
+<!-- Text annotations -->
+<text class="text-on-surface font-code-formula" fill="currentColor" font-size="11" x="175" y="32">+Q(t)</text>
+<text class="text-on-surface font-code-formula" fill="currentColor" font-size="11" x="175" y="195">-Q(t)</text>
+<text class="text-error font-code-formula" fill="#ba1a1a" font-size="12" font-weight="bold" x="238" y="114">S̅ →</text>
+<text class="text-secondary font-code-formula" fill="#006a63" font-size="11" x="175" y="125">B̅(r)</text>
+</svg>
+</div>
+<!-- Image preview placeholder for experimental lab setup -->
+<div class="relative rounded-lg overflow-hidden h-28 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="High precision electrodynamics laboratory test bench showing dual circular copper capacitor plates connected to a high frequency RF pulse generator with oscilloscope display of displacement field transients." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeW85cSF6RJ1KGVPGnWC1wPkDO6ZEiJRLESfVxd0yfBnpeRUQvJQW0re3jYCXvT_9sC4RlG-eb-IOaGJzPZ4QZapfTuEPs_6dteJNIOJIbELucAkF7VQoXHItkDdTGzqq8mQmKZAeuyH2b1GoYggDELbq52feN_y0YGSy568RlRK7f3d8zcsOiqm5O_yOqT0eTZSfZS5zReaZtTKLBHO3MMti9hD1VhnWzGbd_exiydsGNNN7OjYx_lg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-transparent to-transparent flex items-end p-2.5">
+<span class="text-surface font-label-sm text-label-sm">Experimental Verification Testbed: IIT Bombay RF Core Lab</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-label-sm font-label-sm pt-1">
+<span class="text-outline">Correct Keys:</span>
+<span class="font-code-formula font-semibold text-secondary">A, B, D (Score: +4 / -2)</span>
+</div>
+</div>
+</div>
+<!-- Collapsible Faculty Derivation & Video Note -->
+<div class="rounded-lg bg-surface-container overflow-hidden">
+<button class="w-full px-space-md py-3 flex items-center justify-between text-left hover:bg-surface-container-high transition-colors focus:outline-none" onclick="this.nextElementSibling.classList.toggle('hidden');" type="button">
+<div class="flex items-center gap-space-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-[20px]">smart_display</span>
+<span class="font-headline-sm text-headline-sm font-semibold">Faculty Explanation &amp; Video Derivation Note</span>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed-variant">Prof. A. N. Swamy • JEE Advanced Lead</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">expand_more</span>
+</button>
+<div class="p-space-md space-y-space-sm border-none bg-surface-container-low hidden">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<div class="md:col-span-2 space-y-2 text-body-sm font-body-sm text-on-surface">
+<p><strong>Step 1: Displacement Current Calculation:</strong> Since electric field <span class="font-code-formula">E = V/d = Q/(ε₀ π R²)</span>, the rate of change of flux through radius <span class="font-code-formula">r</span> is given by <span class="font-code-formula">Φ_E = E π r² = (Q r²) / (ε₀ R²)</span>. Thus displacement current <span class="font-code-formula">I_d(r) = ε₀ (dΦ_E/dt) = I_0 (r² / R²)</span>.</p>
+<p><strong>Step 2: Ampere Circuital Law Application:</strong> Along the loop of radius <span class="font-code-formula">r</span>, <span class="font-code-formula">B (2π r) = μ₀ I_d(r) = μ₀ I_0 (r² / R²) ⇒ B(r) = (μ₀ I_0 r) / (2π R²)</span>. This proves option (A) correct.</p>
+<p><strong>Step 3: Poynting Vector Convergence:</strong> <span class="font-code-formula">E̅</span> points downwards (charging), <span class="font-code-formula">B̅</span> circles clockwise from above. By right-hand cross product rule <span class="font-code-formula">E̅ × B̅</span>, energy flows purely inward into the capacitor gap, directly replenishing the stored electrostatic dielectric energy.</p>
+</div>
+<!-- Media Derivation Hook -->
+<div class="bg-surface-container-lowest p-space-sm rounded-lg flex flex-col justify-between gap-space-xs">
+<div class="relative rounded-md overflow-hidden bg-inverse-surface aspect-video flex items-center justify-center">
+<img class="w-full h-full object-cover opacity-80" data-alt="Chalkboard lecture setup with physics professor writing electrodynamics differential equations and Poynting theorem derivations in a calm academic lecture hall." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyx-L6rGnL6_uHsEnSzYOG8kV0OPOPjwICh9l-Af7k2UjEnfyp1kQ2JnZ0hIw8rMTAQZqSkvHjySSHmnM5x4XhEOV8eLlFDx5dtAhOunaXTojHyBGebdZ4Oe_44SrRbpBzBzq2llb5NL2vQKMaLVO74pqsVKT3dA_6DRWMIiJ2PbVVTYDTjyBlPCWtNEZ8-vJIKhPSrXYWkn-xXZOa0M5-FWHqZ3Zi049gp2eI0S6KGn5KS4bLLSFglQ"/>
+<div class="w-10 h-10 rounded-full bg-primary/90 text-on-primary flex items-center justify-center shadow-lg absolute">
+<span class="material-symbols-outlined text-[24px]">play_arrow</span>
+</div>
+<span class="absolute bottom-1 right-2 bg-inverse-surface text-surface text-label-sm font-timer-display px-1.5 rounded">08:44</span>
+</div>
+<div class="flex items-center justify-between text-label-sm font-label-sm text-outline">
+<span>Physics Master Series #409</span>
+<a class="text-primary hover:underline font-semibold" href="#">Open Interactive Player</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<!-- ==================== QUESTION 2 (NEET Botany Assertion-Reason) ==================== -->
+<article class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<!-- Header Metadata Strip -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low p-space-sm rounded-lg">
+<div class="flex flex-wrap items-center gap-space-sm">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0" type="checkbox"/>
+<span class="font-code-formula text-code-formula text-primary font-semibold">QID-NEET-54219</span>
+</label>
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold">NEET-UG Medical</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">Botany • Plant Physiology</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-medium">Assertion &amp; Reason (+4, -1)</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">NCERT Verified #184</span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">verified</span> 100% NCERT Pure</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">percent</span> Accuracy: 58.2%</span>
+<button class="p-1 rounded hover:bg-surface-container-high text-outline hover:text-on-surface" title="Edit Question" type="button">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+</button>
+</div>
+</div>
+<!-- Problem Stem -->
+<div class="space-y-space-md">
+<div class="flex flex-col gap-space-sm">
+<div class="bg-surface-container-low p-space-md rounded-lg flex items-start gap-space-sm">
+<span class="px-2.5 py-1 rounded bg-primary text-on-primary font-label-sm text-label-sm font-bold shrink-0">Assertion (A)</span>
+<p class="text-body-md font-body-md text-on-surface font-medium leading-relaxed">
+                In <span class="font-code-formula text-code-formula font-semibold text-primary">C₄</span> plants, photorespiration does not occur, and they show higher water use efficiency and greater photosynthetic biomass productivity compared to <span class="font-code-formula text-code-formula font-semibold text-primary">C₃</span> plants at elevated ambient temperatures.
+              </p>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex items-start gap-space-sm">
+<span class="px-2.5 py-1 rounded bg-secondary text-on-secondary font-label-sm text-label-sm font-bold shrink-0">Reason (R)</span>
+<p class="text-body-md font-body-md text-on-surface font-medium leading-relaxed">
+                The presence of Kranz anatomy and the decarboxylation of <span class="font-code-formula text-code-formula font-semibold">C₄</span> acids in bundle sheath cells builds an intensely high local concentration of <span class="font-code-formula text-code-formula">CO₂</span> around the RuBisCO active enzyme site, fully suppressing its oxygenase activity.
+              </p>
+</div>
+</div>
+<!-- Options Set -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
+<!-- Option 1 (Correct) -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-sm shadow-sm cursor-pointer">
+<span class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-md text-label-md font-semibold shrink-0">1</span>
+<div class="flex flex-col gap-0.5">
+<span class="text-body-sm font-body-sm font-medium">Both (A) and (R) are true, and (R) is the correct explanation of (A).</span>
+<span class="text-secondary font-label-sm text-label-sm font-semibold flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[15px]">check_circle</span> Target NEET Correct Key
+                </span>
+</div>
+</div>
+<!-- Option 2 -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-sm shadow-sm opacity-80 cursor-pointer">
+<span class="w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md font-semibold shrink-0">2</span>
+<div class="flex flex-col gap-0.5">
+<span class="text-body-sm font-body-sm">Both (A) and (R) are true, but (R) is NOT the correct explanation of (A).</span>
+<span class="text-outline font-label-sm text-label-sm mt-1">Distractor Option</span>
+</div>
+</div>
+<!-- Option 3 -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-sm shadow-sm opacity-80 cursor-pointer">
+<span class="w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md font-semibold shrink-0">3</span>
+<div class="flex flex-col gap-0.5">
+<span class="text-body-sm font-body-sm">(A) is true, but (R) is false.</span>
+<span class="text-outline font-label-sm text-label-sm mt-1">Distractor Option</span>
+</div>
+</div>
+<!-- Option 4 -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-sm shadow-sm opacity-80 cursor-pointer">
+<span class="w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md font-semibold shrink-0">4</span>
+<div class="flex flex-col gap-0.5">
+<span class="text-body-sm font-body-sm">(A) is false, but (R) is true.</span>
+<span class="text-outline font-label-sm text-label-sm mt-1">Distractor Option</span>
+</div>
+</div>
+</div>
+<!-- Citation Card -->
+<div class="p-space-sm rounded-lg bg-surface-container flex items-center justify-between text-body-sm font-body-sm">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-[18px]">menu_book</span>
+<span>Class 11 NCERT Biology, Chapter 13: <em>Photosynthesis in Higher Plants</em>, Section 13.8, Page 184.</span>
+</div>
+<span class="text-label-sm font-code-formula font-semibold text-primary">NMC-MED-CAT-09</span>
+</div>
+</div>
+</article>
+<!-- ==================== QUESTION 3 (Numerical Value Integer / Decimal) ==================== -->
+<article class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<!-- Header Metadata Strip -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-low p-space-sm rounded-lg">
+<div class="flex flex-wrap items-center gap-space-sm">
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="w-4 h-4 rounded text-primary focus:ring-0" type="checkbox"/>
+<span class="font-code-formula text-code-formula text-primary font-semibold">QID-NUM-30118</span>
+</label>
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm font-semibold">JEE Main Section B</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">Physical Chemistry • Chemical Kinetics</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-medium">Numerical (+4, 0)</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">Tolerance Enabled</span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">calculate</span> Machine Graded</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">percent</span> Accuracy: 42.0%</span>
+<button class="p-1 rounded hover:bg-surface-container-high text-outline hover:text-on-surface" title="Edit Question" type="button">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+</button>
+</div>
+</div>
+<!-- Problem Stem -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-center">
+<div class="lg:col-span-8 space-y-space-sm">
+<p class="text-body-md font-body-md text-on-surface leading-relaxed">
+              For a first-order gaseous decomposition reaction <span class="font-code-formula text-code-formula font-semibold text-primary">A(g) → 2B(g) + C(g)</span> carried out inside a rigid constant-volume vessel at <span class="font-code-formula text-code-formula">300 K</span>, the initial pressure of gas A is <span class="font-code-formula text-code-formula">100 mm Hg</span>. After <span class="font-code-formula text-code-formula">20 minutes</span>, the total pressure of the gas mixture increases to <span class="font-code-formula text-code-formula">240 mm Hg</span>.
+            </p>
+<p class="text-body-md font-body-md text-on-surface leading-relaxed">
+              The rate constant of the decomposition reaction is determined to be <span class="font-code-formula text-code-formula font-semibold text-primary">k = X × 10−² min−¹</span>. Determine the numerical value of <span class="font-code-formula text-code-formula font-semibold">X</span>. (Given: <span class="font-code-formula text-code-formula">ln(5) = 1.6094</span>, <span class="font-code-formula text-code-formula">ln(2) = 0.6931</span>, round off to two decimal places).
+            </p>
+</div>
+<!-- Machine Evaluator Terminal Mock -->
+<div class="lg:col-span-4 bg-surface-container-low p-space-md rounded-xl space-y-space-sm">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Candidate Terminal View</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface font-semibold">Evaluated Numerical Input</label>
+<div class="flex items-center bg-surface-container-lowest rounded-lg px-3 py-2">
+<input class="w-full bg-transparent font-code-formula text-headline-sm text-primary font-bold focus:outline-none" readonly="" type="text" value="6.27"/>
+<span class="text-label-sm font-code-formula text-outline">min−¹ × 10²</span>
+</div>
+</div>
+<!-- Tolerance Window Settings -->
+<div class="p-space-sm bg-surface-container rounded-lg space-y-1">
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-outline">Allowed Target Range:</span>
+<span class="font-code-formula text-secondary font-semibold">[6.25 to 6.29]</span>
+</div>
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-outline">Theoretical Exact:</span>
+<span class="font-code-formula text-on-surface">6.2738</span>
+</div>
+</div>
+<p class="text-label-sm font-label-sm text-outline">
+              Auto-awarded +4 marks if candidate response falls within the verified delta interval.
+            </p>
+</div>
+</div>
+<!-- Quick derivation strip -->
+<div class="p-space-sm bg-surface-container-low rounded-lg text-body-sm font-body-sm text-on-surface-variant flex flex-wrap items-center gap-space-sm justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">lightbulb</span>
+<span>Derivation: <span class="font-code-formula">P_t = P_0 + 2x = 100 + 2x = 240 ⇒ x = 70</span>. Remaining <span class="font-code-formula">P_A = 100 - 70 = 30 mm Hg</span>. <span class="font-code-formula">k = (1/20) ln(100/30) = (1/20)(1.204) = 0.0602 → 6.27 × 10−²</span>.</span>
+</div>
+<button class="text-primary font-label-sm text-label-sm font-semibold hover:underline shrink-0" type="button">Open In Equation Studio</button>
+</div>
+</article>
+</div>
+<!-- Pagination & Bulk Execution Bar -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm">
+<span class="text-body-sm font-body-sm text-on-surface-variant">Showing <strong>1 – 3</strong> of <strong>84,912</strong> questions</span>
+<div class="h-4 w-px bg-outline-variant hidden sm:block"></div>
+<div class="flex items-center gap-1">
+<span class="text-label-sm font-label-sm text-outline">Per page:</span>
+<select class="bg-surface-container-low text-on-surface text-label-sm font-label-sm rounded px-2 py-1 focus:outline-none">
+<option>10</option>
+<option>25</option>
+<option>50</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-outline hover:text-on-surface transition-colors" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold" type="button">1</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high font-label-md text-label-md" type="button">2</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high font-label-md text-label-md" type="button">3</button>
+<span class="px-2 text-outline font-code-formula">...</span>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high font-label-md text-label-md" type="button">2,831</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-outline hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- ==================== NEW QUESTION MODAL (HIDDEN BY DEFAULT) ==================== -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden flex items-center justify-center p-4" id="newQuestionModal">
+<div class="bg-surface-container-lowest rounded-2xl w-full max-w-3xl shadow-xl flex flex-col max-h-[921px] overflow-hidden">
+<!-- Modal Header -->
+<div class="p-space-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded bg-primary text-on-primary flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]">add_box</span>
+</div>
+<div class="flex flex-col">
+<h2 class="font-headline-md text-headline-md text-on-surface leading-tight">Create Master Question Item</h2>
+<span class="font-label-sm text-label-sm text-outline">LaTeX 3.0, Multiple Schema &amp; Automatic Grading Rules</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container-high flex items-center justify-center text-outline hover:text-on-surface" id="closeNewQuestionBtn" type="button">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+</div>
+<!-- Modal Body Form -->
+<div class="p-space-lg overflow-y-auto space-y-space-md">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+<div>
+<label class="font-label-sm text-label-sm text-outline uppercase">Target Exam</label>
+<select class="w-full bg-surface-container-low text-on-surface text-body-sm font-body-sm rounded-lg p-2.5 mt-1 focus:outline-none">
+<option>JEE Advanced</option>
+<option>JEE Main</option>
+<option>NEET-UG</option>
+<option>UPSC CSE GS-1</option>
+</select>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-outline uppercase">Subject</label>
+<select class="w-full bg-surface-container-low text-on-surface text-body-sm font-body-sm rounded-lg p-2.5 mt-1 focus:outline-none">
+<option>Physics</option>
+<option>Chemistry</option>
+<option>Mathematics</option>
+<option>Biology</option>
+</select>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-outline uppercase">Item Pattern</label>
+<select class="w-full bg-surface-container-low text-on-surface text-body-sm font-body-sm rounded-lg p-2.5 mt-1 focus:outline-none">
+<option>Single Choice MCQ</option>
+<option>Multiple Correct</option>
+<option>Numerical Value</option>
+<option>Assertion-Reason</option>
+</select>
+</div>
+</div>
+<div class="space-y-1">
+<label class="font-label-sm text-label-sm text-outline uppercase flex items-center justify-between">
+<span>Problem Statement &amp; LaTeX Formula Stem</span>
+<span class="text-primary font-code-formula lowercase">mathjax compatible ($$...$$)</span>
+</label>
+<textarea class="w-full bg-surface-container-low text-on-surface text-body-md font-body-md rounded-lg p-3 focus:outline-none" placeholder="Draft your problem stem here using $$ \oint \vec{B} \cdot d\vec{l} $$..." rows="4"></textarea>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div class="p-space-md bg-surface-container-low rounded-lg space-y-space-xs">
+<span class="font-label-sm text-label-sm font-semibold uppercase text-outline">Marks Allocation Matrix</span>
+<div class="grid grid-cols-2 gap-space-xs">
+<div>
+<label class="text-label-sm font-label-sm text-on-surface">Positive (+)</label>
+<input class="w-full bg-surface-container-lowest text-on-surface rounded p-2 text-center font-bold font-code-formula" type="number" value="4"/>
+</div>
+<div>
+<label class="text-label-sm font-label-sm text-on-surface">Negative (-)</label>
+<input class="w-full bg-surface-container-lowest text-error rounded p-2 text-center font-bold font-code-formula" type="number" value="1"/>
+</div>
+</div>
+</div>
+<div class="p-space-md bg-surface-container-low rounded-lg space-y-space-xs">
+<span class="font-label-sm text-label-sm font-semibold uppercase text-outline">Curriculum Tagging</span>
+<div>
+<label class="text-label-sm font-label-sm text-on-surface">NCERT / Textbook Reference</label>
+<input class="w-full bg-surface-container-lowest text-on-surface rounded p-2 text-body-sm font-body-sm mt-1 focus:outline-none" placeholder="e.g. Chapter 4, Section 4.2" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="p-space-lg bg-surface-container-low flex items-center justify-end gap-space-sm">
+<button class="px-5 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high font-label-md" id="cancelNewQuestionBtn" type="button">Cancel</button>
+<button class="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md font-semibold shadow-sm" type="button">Save to Master Bank</button>
+</div>
+</div>
+</div>
+<!-- ==================== BULK IMPORT MODAL ==================== -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden flex items-center justify-center p-4" id="bulkImportModal">
+<div class="bg-surface-container-lowest rounded-2xl w-full max-w-xl shadow-xl p-space-lg space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[28px]">upload_file</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Bulk Parser &amp; Sync Engine</h2>
+</div>
+<button class="text-outline hover:text-on-surface" id="closeBulkImportBtn" type="button">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+        Upload batch question packages authored in Microsoft Word (.docx with embedded MathType) or standard TeraExam Structured CSV.
+      </p>
+<!-- Drag & Drop Zone -->
+<div class="p-space-xl bg-surface-container-low rounded-xl flex flex-col items-center justify-center text-center cursor-pointer hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-outline text-[42px] mb-2">cloud_upload</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Drag and drop file here, or browse</span>
+<span class="font-label-sm text-label-sm text-outline mt-1">Accepts .CSV, .DOCX, .ZIP (containing diagrams) up to 50MB</span>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-lg flex items-center justify-between text-body-sm font-body-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">download_for_offline</span>
+<span>Download Standard Format Schema (.CSV)</span>
+</div>
+<a class="text-primary font-label-md text-label-md font-semibold hover:underline" href="#">Download Template</a>
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-space-xs">
+<button class="px-4 py-2 rounded-lg text-on-surface-variant font-label-md" id="cancelBulkImportBtn" type="button">Close</button>
+<button class="px-5 py-2.5 rounded-lg bg-primary text-on-primary font-label-md font-semibold shadow-sm" type="button">Process &amp; Verify Batch</button>
+</div>
+</div>
+</div>
+<!-- ==================== EXPORT TO MOCK TEST DRAWER ==================== -->
+<div class="fixed right-0 top-0 bottom-0 w-full max-w-md bg-surface-container-lowest shadow-xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between" id="exportDrawer">
+<div class="p-space-lg space-y-space-md overflow-y-auto">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[24px]">ballot</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Test Assembler Queue</h2>
+</div>
+<button class="text-outline hover:text-on-surface" id="closeExportDrawerBtn" type="button">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+        Assemble selected verified stems directly into active mock schedules or export to NTA format packages.
+      </p>
+<!-- Selected Items Queue -->
+<div class="space-y-space-xs">
+<div class="p-space-sm bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-code-formula text-label-md font-semibold text-primary">QID-ADV-89104</span>
+<span class="text-label-sm text-outline">Physics • Ampère-Maxwell</span>
+</div>
+<span class="text-label-sm font-code-formula text-secondary font-semibold">+4 / -2</span>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-code-formula text-label-md font-semibold text-primary">QID-NEET-54219</span>
+<span class="text-label-sm text-outline">Botany • Photorespiration C4</span>
+</div>
+<span class="text-label-sm font-code-formula text-secondary font-semibold">+4 / -1</span>
+</div>
+</div>
+<!-- Test Target Details -->
+<div class="space-y-space-sm pt-space-xs">
+<div>
+<label class="font-label-sm text-label-sm text-outline uppercase">Append To Test</label>
+<select class="w-full bg-surface-container-low text-on-surface text-body-sm font-body-sm rounded-lg p-2.5 mt-1 focus:outline-none">
+<option>All-India Grand Mock Test #04 (JEE Adv)</option>
+<option>Classroom Diagnostic Test Series (NEET)</option>
+<option>Create Brand New Paper Blueprint...</option>
+</select>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-outline uppercase">Section Target</label>
+<select class="w-full bg-surface-container-low text-on-surface text-body-sm font-body-sm rounded-lg p-2.5 mt-1 focus:outline-none">
+<option>Section 1: Multi-Choice Questions</option>
+<option>Section 2: Numerical Response Integer</option>
+<option>Section 3: Comprehensive Paragraph</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-space-lg bg-surface-container-low space-y-space-sm">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-outline">Total Mark Contribution:</span>
+<span class="font-code-formula font-bold text-on-surface">+8 Marks</span>
+</div>
+<button class="w-full py-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md font-semibold transition-all shadow-sm" type="button">
+        Confirm &amp; Link to Examination Blueprint
+      </button>
+</div>
+</div>
+</div>
+<script>
+  // Simple modal & drawer bindings
+  const newQuestionModal = document.getElementById('newQuestionModal');
+  const openNewQuestionBtn = document.getElementById('openNewQuestionBtn');
+  const closeNewQuestionBtn = document.getElementById('closeNewQuestionBtn');
+  const cancelNewQuestionBtn = document.getElementById('cancelNewQuestionBtn');
+
+  const bulkImportModal = document.getElementById('bulkImportModal');
+  const openBulkImportBtn = document.getElementById('openBulkImportBtn');
+  const closeBulkImportBtn = document.getElementById('closeBulkImportBtn');
+  const cancelBulkImportBtn = document.getElementById('cancelBulkImportBtn');
+
+  const exportDrawer = document.getElementById('exportDrawer');
+  const openExportDrawerBtn = document.getElementById('openExportDrawerBtn');
+  const closeExportDrawerBtn = document.getElementById('closeExportDrawerBtn');
+
+  function toggleModal(modal, show) {
+    if (show) {
+      modal.classList.remove('hidden');
+    } else {
+      modal.classList.add('hidden');
+    }
+  }
+
+  openNewQuestionBtn.addEventListener('click', () => toggleModal(newQuestionModal, true));
+  closeNewQuestionBtn.addEventListener('click', () => toggleModal(newQuestionModal, false));
+  cancelNewQuestionBtn.addEventListener('click', () => toggleModal(newQuestionModal, false));
+
+  openBulkImportBtn.addEventListener('click', () => toggleModal(bulkImportModal, true));
+  closeBulkImportBtn.addEventListener('click', () => toggleModal(bulkImportModal, false));
+  cancelBulkImportBtn.addEventListener('click', () => toggleModal(bulkImportModal, false));
+
+  openExportDrawerBtn.addEventListener('click', () => {
+    exportDrawer.classList.remove('translate-x-full');
+  });
+
+  closeExportDrawerBtn.addEventListener('click', () => {
+    exportDrawer.classList.add('translate-x-full');
+  });
+</script></main></div></body></html>

@@ -1,0 +1,166 @@
+{
+  "colorMode": "LIGHT",
+  "font": "INTER",
+  "roundness": "ROUND_EIGHT",
+  "customColor": "#4f46e5",
+  "headlineFont": "INTER",
+  "bodyFont": "INTER",
+  "labelFont": "JETBRAINS_MONO",
+  "namedColors": {
+    "on_surface_variant": "#464555",
+    "outline": "#777587",
+    "surface_tint": "#4d44e3",
+    "tertiary_fixed_dim": "#93ccff",
+    "primary_fixed": "#e2dfff",
+    "surface_container_lowest": "#ffffff",
+    "on_tertiary_fixed": "#001d31",
+    "background": "#faf8ff",
+    "secondary": "#006a63",
+    "error_container": "#ffdad6",
+    "tertiary_container": "#00659a",
+    "on_error_container": "#93000a",
+    "surface": "#faf8ff",
+    "inverse_on_surface": "#eef0ff",
+    "secondary_fixed_dim": "#80d5cb",
+    "surface_container_low": "#f2f3ff",
+    "on_primary_fixed": "#0f0069",
+    "error": "#ba1a1a",
+    "on_tertiary": "#ffffff",
+    "on_background": "#131b2e",
+    "inverse_surface": "#283044",
+    "outline_variant": "#c7c4d8",
+    "on_secondary_fixed": "#00201d",
+    "on_tertiary_container": "#bedfff",
+    "on_primary": "#ffffff",
+    "on_secondary_fixed_variant": "#00504a",
+    "on_surface": "#131b2e",
+    "surface_bright": "#faf8ff",
+    "surface_variant": "#dae2fd",
+    "primary_fixed_dim": "#c3c0ff",
+    "on_secondary_container": "#006f67",
+    "on_secondary": "#ffffff",
+    "tertiary": "#004c76",
+    "secondary_fixed": "#9cf2e8",
+    "secondary_container": "#99efe5",
+    "on_primary_container": "#dad7ff",
+    "surface_container": "#eaedff",
+    "inverse_primary": "#c3c0ff",
+    "primary_container": "#4f46e5",
+    "surface_dim": "#d2d9f4",
+    "on_primary_fixed_variant": "#3323cc",
+    "on_error": "#ffffff",
+    "primary": "#3525cd",
+    "surface_container_high": "#e2e7ff",
+    "surface_container_highest": "#dae2fd",
+    "on_tertiary_fixed_variant": "#004b73",
+    "tertiary_fixed": "#cce5ff"
+  },
+  "designMd": "---\nname: Calm Academic Focus\ncolors:\n  surface: '#faf8ff'\n  surface-dim: '#d2d9f4'\n  surface-bright: '#faf8ff'\n  surface-container-lowest: '#ffffff'\n  surface-container-low: '#f2f3ff'\n  surface-container: '#eaedff'\n  surface-container-high: '#e2e7ff'\n  surface-container-highest: '#dae2fd'\n  on-surface: '#131b2e'\n  on-surface-variant: '#464555'\n  inverse-surface: '#283044'\n  inverse-on-surface: '#eef0ff'\n  outline: '#777587'\n  outline-variant: '#c7c4d8'\n  surface-tint: '#4d44e3'\n  primary: '#3525cd'\n  on-primary: '#ffffff'\n  primary-container: '#4f46e5'\n  on-primary-container: '#dad7ff'\n  inverse-primary: '#c3c0ff'\n  secondary: '#006a63'\n  on-secondary: '#ffffff'\n  secondary-container: '#99efe5'\n  on-secondary-container: '#006f67'\n  tertiary: '#004c76'\n  on-tertiary: '#ffffff'\n  tertiary-container: '#00659a'\n  on-tertiary-container: '#bedfff'\n  error: '#ba1a1a'\n  on-error: '#ffffff'\n  error-container: '#ffdad6'\n  on-error-container: '#93000a'\n  primary-fixed: '#e2dfff'\n  primary-fixed-dim: '#c3c0ff'\n  on-primary-fixed: '#0f0069'\n  on-primary-fixed-variant: '#3323cc'\n  secondary-fixed: '#9cf2e8'\n  secondary-fixed-dim: '#80d5cb'\n  on-secondary-fixed: '#00201d'\n  on-secondary-fixed-variant: '#00504a'\n  tertiary-fixed: '#cce5ff'\n  tertiary-fixed-dim: '#93ccff'\n  on-tertiary-fixed: '#001d31'\n  on-tertiary-fixed-variant: '#004b73'\n  background: '#faf8ff'\n  on-background: '#131b2e'\n  surface-variant: '#dae2fd'\ntypography:\n  display:\n    fontFamily: Inter\n    fontSize: 32px\n    fontWeight: '700'\n    lineHeight: 40px\n    letterSpacing: -0.02em\n  display-mobile:\n    fontFamily: Inter\n    fontSize: 24px\n    fontWeight: '700'\n    lineHeight: 32px\n    letterSpacing: -0.015em\n  headline-lg:\n    fontFamily: Inter\n    fontSize: 24px\n    fontWeight: '600'\n    lineHeight: 32px\n    letterSpacing: -0.01em\n  headline-lg-mobile:\n    fontFamily: Inter\n    fontSize: 20px\n    fontWeight: '600'\n    lineHeight: 28px\n    letterSpacing: -0.01em\n  headline-md:\n    fontFamily: Inter\n    fontSize: 20px\n    fontWeight: '600'\n    lineHeight: 28px\n  headline-sm:\n    fontFamily: Inter\n    fontSize: 16px\n    fontWeight: '600'\n    lineHeight: 24px\n  body-lg:\n    fontFamily: Inter\n    fontSize: 18px\n    fontWeight: '400'\n    lineHeight: 30px\n  body-md:\n    fontFamily: Inter\n    fontSize: 16px\n    fontWeight: '400'\n    lineHeight: 26px\n  body-sm:\n    fontFamily: Inter\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 22px\n  code-formula:\n    fontFamily: JetBrains Mono\n    fontSize: 15px\n    fontWeight: '500'\n    lineHeight: 24px\n  timer-display:\n    fontFamily: JetBrains Mono\n    fontSize: 22px\n    fontWeight: '600'\n    lineHeight: 28px\n    letterSpacing: 0.02em\n  label-md:\n    fontFamily: Inter\n    fontSize: 13px\n    fontWeight: '500'\n    lineHeight: 18px\n    letterSpacing: 0.01em\n  label-sm:\n    fontFamily: Inter\n    fontSize: 11px\n    fontWeight: '600'\n    lineHeight: 16px\n    letterSpacing: 0.03em\nrounded:\n  sm: 0.25rem\n  DEFAULT: 0.5rem\n  md: 0.75rem\n  lg: 1rem\n  xl: 1.5rem\n  full: 9999px\nspacing:\n  gutter: 1.5rem\n  gutter-mobile: 0.75rem\n  margin: 2rem\n  margin-mobile: 1rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 1rem\n  space-lg: 1.5rem\n  space-xl: 2rem\n---\n\n## Brand & Style\n\nThis design system is engineered for competitive exam environments (JEE Main/Advanced, NEET, UPSC/State PCS, and Board Exams) where candidates spend 3 to 6 consecutive hours in high-pressure testing sessions. The visual atmosphere rejects the aggressive, gamified aesthetics typical of consumer edtech, favoring instead an intentional calmness, clarity, and structural discipline.\n\n### Personality & Demeanor\n- **Academic & Trustworthy:** Mirrors official examination software standards (such as NTA and TCS iON) while removing their dated visual friction, replacing it with ergonomic typography and balanced negative space.\n- **Cognitive Serenity (ADHD-Friendly):** Strips away distracting banners, animated ribbons, and unnecessary visual noise. Complex question stems, mathematical notations, and multi-column figures are framed with clear, non-intrusive layout borders.\n- **Ergonomic Endurance:** Soft, low-strain canvas backgrounds reduce eye fatigue during sustained screen exposure under variable lighting conditions (from coaching institute labs to late-night home study desks).\n\n### Design Philosophy\nThe system combines **Modern Functional Minimalism** with **Tonal Surface Layering**. Elements strictly adhere to a **70-20-10 distribution rule**:\n- **70% Neutral Foundation:** Soft slate surfaces (`#F8FAFC`, `#FFFFFF`) ensuring effortless legibility of complex equations and diagrams.\n- **20% Structural & Interactive Elements:** Deep Indigo (`#4F46E5`) for primary actions and focused test-taking anchors, paired with grounded Teal (`#0F766E`) for secondary navigational elements and progress metrics.\n- **10% Semantic Signals:** Deliberate status markers reserved strictly for test state (Answered, Flagged, Urgent Timer, and Information Callouts).\n\n## Colors\n\nThe palette balances clinical precision with reassuring focus. The default mode is light to reflect daytime institute testing labs and print-mimicking clarity.\n\n### Primary, Secondary & Accent Roles\n- **Primary Indigo (`#4F46E5`):** Used for primary commands (Save & Next, Submit Section, Primary Filters), active question palette numbers, and high-visibility focus indicators.\n- **Secondary Teal (`#0F766E`):** Anchors secondary tools, reference formula drawouts, module completion chips, and side panel headers.\n- **Tertiary Sky (`#0284C7`):** Reserved for contextual informational cues, test pattern notices, scoring rubrics, and marking scheme dialogs.\n\n### Neutral Matrix (70% Canvas Rule)\n- **Base Canvas (`#F8FAFC`):** The soothing slate foundation for all root viewport backgrounds, eliminating glare from pure white screens.\n- **Surface Elevation 1 (`#FFFFFF`):** High-readability substrate for question stems, reading comprehension passages, problem cards, and option lists.\n- **Surface Neutral Borders (`#E2E8F0`):** Fine, low-strain hairline dividers separating question stems from solution rationale panels.\n- **Primary Body Text (`#0F172A`):** Deep slate-black, calibrated for contrast compliant with WCAG AAA across mathematical symbols, subscripts, and superscripts.\n- **Subdued Body Text (`#475569`):** Medium slate for question IDs, section categories, passage metadata, and secondary timestamps.\n\n### Semantic Status Matrix (10% Rule)\nSemantic colors must never be used decoratively; their appearance is restricted to testing status, validation, and time thresholds:\n- **Success Emerald (`#059669`):** Indicates \"Answered\", \"Verified Attempt\", or \"+4 Marks Positive Delta\".\n- **Warning Amber (`#D97706`):** Indicates \"Marked for Review\", \"Bookmarked Question\", or \"Section Time Expiring (<15m)\".\n- **Critical Crimson (`#DC2626`):** Reserved strictly for \"Unanswered & Visited\", critical negative marks alert (\"-1 Negative Delta\"), and critical exam countdown (<5m remaining).\n- **Muted Slate (`#94A3B8`):** Denotes \"Not Visited\" palette items.\n\n## Typography\n\nTypography prioritizes continuous comprehension, reading speed, and mathematical clarity.\n\n### Font Hierarchy & Roles\n- **Headlines & Body (`Inter`):** Clean, neo-grotesque structure with tall x-height and open apertures. Highly suited for complex stem questions, UPSC analytical essay prompts, and dense multiple-choice answer descriptions. Body copy is set at generous line-heights (`1.6x` to `1.65x`) to prevent row-skipping during fatigue.\n- **Formulas & Timers (`JetBrains Mono`):** Dedicated monospaced rhythm prevents horizontal visual shifts during live exam timers (ensuring zero jitter in second count-downs) and renders algebraic equations, chemical notation scripts, matrices, and coordinate geometry formulas with strict structural alignment.\n\n### Reading & Math Guidelines\n- Question stems must use `body-lg` on desktop displays to emulate print book comfort.\n- Inline math (LaTeX/MathML rendered formulas) must align to the baseline of `Inter` text with a minimum line height of `28px` to prevent superscript/subscript overlaps.\n- Section tags, negative marking chips, and question index markers use `label-sm` with slight uppercase tracking.\n\n## Layout & Spacing\n\nThe spatial architecture is split into a **dual-pane operational grid** engineered for sustained problem-solving efficiency.\n\n### Layout Model\n- **Split-Screen Exam Environment (Desktop & Tablet Landscape):** \n  - **Left Pane (68-72%):** Question view, passage context, formulas, and multiple-choice interaction area. Fully scrollable with fixed question headers and sticky footer action buttons.\n  - **Right Pane (28-32%):** Persistent candidate HUD, live timer, collapsible question matrix (1\u2013180 grid), and section-switching tabs.\n- **Single-Column Stacking (Mobile & Tablet Portrait):**\n  - Content stacks vertically. The Question Matrix collapses into an off-canvas drawer accessed via a persistent bottom bar containing the timer, quick-jump button, and \"Review\" counter.\n\n### Grid Breakpoints\n- **Desktop (1280px and above):** 12-column grid, persistent dual-pane layout, 32px canvas margins.\n- **Tablet (768px \u2013 1279px):** 8-column layout, compact right sidebar (collapsible to 60px mini-strip or sheet drawer), 24px canvas margins.\n- **Mobile (< 767px):** 4-column layout, full-bleed test canvas, sticky bottom navigation dock, 16px horizontal margins.\n\n### Component Spacing Rhythm\n- **Internal Component Padding:** Use `space-md` (16px) for standard interactive cards and question option blocks; use `space-lg` (24px) for master test containers.\n- **Form & Option Gaps:** Options in multiple-choice questions must maintain a minimum vertical gap of `space-sm` (8px) to eliminate mis-clicks on touch-enabled coaching lab terminals.\n\n## Elevation & Depth\n\nThis design system deliberately minimizes standard drop shadows. Heavy blur shadows add cognitive clutter and visually distract anxious test-takers. Instead, depth is conveyed through **structural tonal layering** and **crisp 1px low-contrast outlines**.\n\n### Surface Elevation Levels\n- **Level 0 (Canvas Base):** `#F8FAFC` \u2014 Houses the backdrop, split divider gutters, and global header track.\n- **Level 1 (Card & Passage Sheets):** `#FFFFFF` with a 1px solid border in `#E2E8F0` and zero ambient drop shadow. This creates a tactile, clean sheet-of-paper feel.\n- **Level 2 (Interactive Floating Elements):** Option items in selected state, quick-formula popovers, and question filter dropdowns receive a subtle micro-shadow: `box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05)` coupled with a `#CBD5E1` border.\n- **Level 3 (Modal Dialogs & Urgent Alerts):** Submission summary modals and time-up screens use `box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05)` over a 40% opacity slate backdrop (`rgba(15, 23, 42, 0.4)`).\n\n### Focus & Accessibility Rings\nAll focused interactive elements strictly deploy a standardized focus ring:\n- `outline: none;`\n- `box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #4F46E5;` (or Tailwind equivalent `ring-2 ring-indigo-500 ring-offset-2`).\n\n## Shapes\n\nThe design system uses a balanced **0.5rem (8px)** geometric radius standard. This choice eliminates both the harshness of brutalist angular boxes and the playful casualness of fully pill-shaped consumer interfaces, projecting an organized, institutional tone.\n\n### Shape Hierarchy\n- **Base Components (Inputs, Selectors, Option Buttons):** 8px (`0.5rem`).\n- **Question Matrix Cells (Number Palette):** 6px to 8px soft-cornered squares, balancing maximum click area with dense spatial arrangement.\n- **Containers, Modals, and Main Question Card Surfaces:** 12px (`0.75rem`) to 16px (`1rem`).\n- **Pill Exceptions (`9999px`):** Reserved exclusively for dynamic status chips (e.g., \"Single Correct\", \"Negative Marking: -1\", \"Answered: 45/60\").\n\n## Components\n\n### Buttons\n- **Primary (\"Save & Next\"):** Deep Indigo (`#4F46E5`) fill, white text, 8px radius, medium weight (`font-weight: 500`). Hover: `#4338CA`. Active focus: 2px ring offset with `#4F46E5`.\n- **Secondary (\"Mark for Review & Next\"):** White background, 1.5px border in Amber (`#D97706`), Amber text. Communicates secondary intent without dominating the visual hierarchy.\n- **Tertiary / Neutral (\"Clear Response\", \"Previous\"):** Ghost slate with text in `#475569`. Hover: background `#F1F5F9`.\n\n### Option Selection (MCQs)\n- Options are styled as full-width interactive cards rather than standard naked radio buttons.\n- **Default State:** `#FFFFFF` background, 1px border in `#E2E8F0`, padding of 14px 16px, 8px radius.\n- **Hover State:** Background shifts to `#F8FAFC` with border `#CBD5E1`.\n- **Selected State:** Border is boosted to 1.5px solid Indigo (`#4F46E5`), with a subtle Indigo tint background (`#EEF2FF`).\n- **Option Prefix Key:** Circular index badge (A, B, C, D) centered at left: 28px diameter, styled in neutral gray for unselected and Indigo solid with white text when selected.\n\n### Question Matrix / Palette Grid\n- Grid of 36px x 36px cells displaying question numbers (1 to 180).\n- **Answered:** Emerald green (`#059669`) fill, white text.\n- **Not Answered / Visited:** Crimson red (`#DC2626`) fill, white text.\n- **Marked for Review:** Amber (`#D97706`) fill, white text.\n- **Answered & Marked for Review:** Amber fill with a persistent small Emerald dot pinned to the top-right corner.\n- **Not Visited:** Neutral slate background (`#F1F5F9`), text `#64748B`, 1px border in `#E2E8F0`.\n\n### Timer Display\n- Monospaced numerical readout housed within a padded badge (`#0F172A` text on `#F1F5F9` background).\n- When remaining time drops under 15 minutes, background shifts to soft Amber tint (`#FEF3C7`) with `#B45309` text.\n- When remaining time drops under 5 minutes, shifts to soft Red tint (`#FEE2E2`) with `#DC2626` text, accompanied by an accessible subtle pulse animation.\n\n### Input Fields (Numerical Answer Type Questions)\n- Strict mathematical input fields.\n- 48px height, 8px radius, 1.5px border `#CBD5E1`, monospaced text input centered or left-aligned at 18px font size.\n- Includes quick on-screen scientific keypad toggles and clear action triggers.\n\n### Passage & Split Cards\n- Left panel includes a scrollable container for reading comprehension (UPSC/CAT style) or complex problem scenarios (JEE Advanced passage-based problems).\n- Features a subtle vertical dividing line (`#E2E8F0`) with an optional adjustable horizontal split handle for candidates adjusting visual weight between passage and question.",
+  "colorVariant": "FIDELITY",
+  "overridePrimaryColor": "#4f46e5",
+  "overrideSecondaryColor": "#0f766e",
+  "overrideTertiaryColor": "#0284c7",
+  "overrideNeutralColor": "#0f172a",
+  "spacingScale": 2,
+  "typography": {
+    "label-sm": {
+      "fontFamily": "Inter",
+      "fontSize": "11px",
+      "fontWeight": "600",
+      "lineHeight": "16px",
+      "letterSpacing": "0.03em"
+    },
+    "headline-lg-mobile": {
+      "fontFamily": "Inter",
+      "fontSize": "20px",
+      "fontWeight": "600",
+      "lineHeight": "28px",
+      "letterSpacing": "-0.01em"
+    },
+    "code-formula": {
+      "fontFamily": "JetBrains Mono",
+      "fontSize": "15px",
+      "fontWeight": "500",
+      "lineHeight": "24px"
+    },
+    "body-md": {
+      "fontFamily": "Inter",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "26px"
+    },
+    "label-md": {
+      "fontFamily": "Inter",
+      "fontSize": "13px",
+      "fontWeight": "500",
+      "lineHeight": "18px",
+      "letterSpacing": "0.01em"
+    },
+    "headline-lg": {
+      "fontFamily": "Inter",
+      "fontSize": "24px",
+      "fontWeight": "600",
+      "lineHeight": "32px",
+      "letterSpacing": "-0.01em"
+    },
+    "display": {
+      "fontFamily": "Inter",
+      "fontSize": "32px",
+      "fontWeight": "700",
+      "lineHeight": "40px",
+      "letterSpacing": "-0.02em"
+    },
+    "body-sm": {
+      "fontFamily": "Inter",
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "22px"
+    },
+    "headline-sm": {
+      "fontFamily": "Inter",
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "lineHeight": "24px"
+    },
+    "body-lg": {
+      "fontFamily": "Inter",
+      "fontSize": "18px",
+      "fontWeight": "400",
+      "lineHeight": "30px"
+    },
+    "display-mobile": {
+      "fontFamily": "Inter",
+      "fontSize": "24px",
+      "fontWeight": "700",
+      "lineHeight": "32px",
+      "letterSpacing": "-0.015em"
+    },
+    "timer-display": {
+      "fontFamily": "JetBrains Mono",
+      "fontSize": "22px",
+      "fontWeight": "600",
+      "lineHeight": "28px",
+      "letterSpacing": "0.02em"
+    },
+    "headline-md": {
+      "fontFamily": "Inter",
+      "fontSize": "20px",
+      "fontWeight": "600",
+      "lineHeight": "28px"
+    }
+  },
+  "spacing": {
+    "margin": "2rem",
+    "gutter-mobile": "0.75rem",
+    "space-sm": "0.5rem",
+    "space-xs": "0.25rem",
+    "margin-mobile": "1rem",
+    "gutter": "1.5rem",
+    "space-lg": "1.5rem",
+    "space-xl": "2rem",
+    "space-md": "1rem"
+  },
+  "headlineFontFamily": "Inter",
+  "bodyFontFamily": "Inter",
+  "labelFontFamily": "JetBrains Mono"
+}
