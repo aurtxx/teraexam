@@ -1,30 +1,42 @@
 import csv
 from datetime import timedelta
 from decimal import Decimal
+from django.contrib.auth.models import User
 from django.db import models, transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from administration.models import AuditLog
 from .models import (
     Institution, Batch, UserProfile, Subject, Topic, Question,
-    Exam, ExamSection, ExamQuestion, ExamAttempt, StudentAnswer, Announcement
+    Exam, ExamSection, ExamQuestion, ExamAttempt, StudentAnswer, Announcement,
+    ProctoringEvent, ExamStudentOverride
 )
 from .serializers import (
     InstitutionSerializer, BatchSerializer, SubjectSerializer, TopicSerializer,
     QuestionSerializer, StudentLiveQuestionSerializer, ExamListSerializer,
     ExamDetailSerializer, ExamQuestionSerializer, ExamAttemptSerializer,
-    StudentAnswerSerializer, AnnouncementSerializer, UserProfileSerializer
+    StudentAnswerSerializer, AnnouncementSerializer, UserProfileSerializer,
+    ProctoringEventSerializer, ExamStudentOverrideSerializer
 )
 from .services import (
     calculate_ranks_and_percentiles, get_exam_analytics,
     get_student_scorecard, bulk_import_questions, bulk_import_students
 )
+from .subscription import (
+    get_institution_usage, check_student_quota, check_exam_quota, check_question_quota
+)
+from .reports import (
+    generate_printable_scorecard_html, generate_printable_merit_list_html
+)
+from .audit import log_audit_event
 
 
 def get_user_profile(user):
@@ -87,7 +99,47 @@ class InstitutionViewSet(BaseTenantViewSet):
         serializer = self.get_serializer(inst, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        log_audit_event(
+            user=request.user,
+            action="UPDATE_BRANDING",
+            resource_type="Institution",
+            resource_id=str(inst.id),
+            details=f"Updated branding settings for {inst.name}",
+            request=request
+        )
         return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def subscription_usage(self, request):
+        inst = self.get_institution()
+        if not inst:
+            return Response({'detail': 'No institution found'}, status=status.HTTP_404_NOT_FOUND)
+        usage = get_institution_usage(inst)
+        return Response(usage)
+
+    @action(detail=False, methods=['get'])
+    def audit_logs(self, request):
+        inst = self.get_institution()
+        if not inst:
+            return Response({'detail': 'No institution found'}, status=status.HTTP_404_NOT_FOUND)
+        profile = self.get_user_profile()
+        if profile.role not in ['PLATFORM_ADMIN', 'INSTITUTE_ADMIN']:
+            return Response({'detail': 'Only administrators can inspect institutional audit logs'}, status=status.HTTP_403_FORBIDDEN)
+        
+        member_user_ids = inst.members.values_list('user_id', flat=True)
+        logs = AuditLog.objects.filter(models.Q(user_id__in=member_user_ids) | models.Q(user__isnull=True)).order_by('-timestamp')[:50]
+        
+        logs_data = [{
+            'id': l.id,
+            'username': l.user.username if l.user else 'System',
+            'action': l.action,
+            'resource_type': l.resource_type,
+            'resource_id': l.resource_id,
+            'details': l.details,
+            'ip_address': l.ip_address,
+            'timestamp': l.timestamp.isoformat()
+        } for l in logs]
+        return Response(logs_data)
 
 
 class BatchViewSet(BaseTenantViewSet):
@@ -158,7 +210,18 @@ class QuestionViewSet(BaseTenantViewSet):
 
     def perform_create(self, serializer):
         inst = self.get_institution()
-        serializer.save(institution=inst, created_by=self.request.user)
+        allowed, err_msg = check_question_quota(inst, 1)
+        if not allowed:
+            raise ValidationError({'detail': err_msg})
+        q = serializer.save(institution=inst, created_by=self.request.user)
+        log_audit_event(
+            user=self.request.user,
+            action="CREATE_QUESTION",
+            resource_type="Question",
+            resource_id=str(q.id),
+            details=f"Created question in {q.subject.name} ({q.question_type})",
+            request=self.request
+        )
 
     @action(detail=False, methods=['post'])
     def bulk_import(self, request):
@@ -171,8 +234,21 @@ class QuestionViewSet(BaseTenantViewSet):
             
         if not csv_text.strip():
             return Response({'detail': 'CSV content is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Pre-check quota
+        allowed, err_msg = check_question_quota(inst, 1)
+        if not allowed:
+            return Response({'detail': err_msg}, status=status.HTTP_400_BAD_REQUEST)
             
         result = bulk_import_questions(inst, request.user, csv_text)
+        log_audit_event(
+            user=request.user,
+            action="BULK_IMPORT_QUESTIONS",
+            resource_type="Question",
+            resource_id="",
+            details=f"Bulk imported {result.get('created_count', 0)} questions into {inst.name}",
+            request=request
+        )
         return Response(result)
 
     @action(detail=False, methods=['get'])
@@ -207,7 +283,18 @@ class ExamViewSet(BaseTenantViewSet):
 
     def perform_create(self, serializer):
         inst = self.get_institution()
-        serializer.save(institution=inst, created_by=self.request.user)
+        allowed, err_msg = check_exam_quota(inst)
+        if not allowed:
+            raise ValidationError({'detail': err_msg})
+        exam = serializer.save(institution=inst, created_by=self.request.user)
+        log_audit_event(
+            user=self.request.user,
+            action="CREATE_EXAM",
+            resource_type="Exam",
+            resource_id=str(exam.id),
+            details=f"Created exam '{exam.title}' ({exam.code})",
+            request=self.request
+        )
 
     @action(detail=True, methods=['post'])
     def add_questions(self, request, pk=None):
@@ -250,6 +337,15 @@ class ExamViewSet(BaseTenantViewSet):
         if publish:
             # Auto-calculate ranks and percentiles upon publication
             calculate_ranks_and_percentiles(exam)
+
+        log_audit_event(
+            user=request.user,
+            action="PUBLISH_RESULTS" if publish else "UNPUBLISH_RESULTS",
+            resource_type="Exam",
+            resource_id=str(exam.id),
+            details=f"{'Published' if publish else 'Hidden'} results and rankings for exam {exam.code}",
+            request=request
+        )
             
         return Response({
             'status': 'Results published' if publish else 'Results hidden',
@@ -295,6 +391,162 @@ class ExamViewSet(BaseTenantViewSet):
                 att.status
             ])
         return response
+
+    @action(detail=True, methods=['get'])
+    def printable_merit_list(self, request, pk=None):
+        """Renders an official print-ready master merit list / rank sheet."""
+        exam = self.get_object()
+        html_content = generate_printable_merit_list_html(exam)
+        return HttpResponse(html_content, content_type='text/html')
+
+    @action(detail=True, methods=['get'])
+    def student_scorecard(self, request, pk=None):
+        """Renders print-ready scorecard for any student attempt."""
+        exam = self.get_object()
+        attempt_id = request.query_params.get('attempt_id')
+        student_id = request.query_params.get('student_id')
+        
+        if attempt_id:
+            attempt = get_object_or_404(ExamAttempt, id=attempt_id, exam=exam)
+        elif student_id:
+            attempt = ExamAttempt.objects.filter(exam=exam, student_id=student_id).order_by('-attempt_number').first()
+            if not attempt:
+                return Response({'detail': 'No attempt found for candidate'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({'detail': 'attempt_id or student_id required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        html_content = generate_printable_scorecard_html(attempt)
+        return HttpResponse(html_content, content_type='text/html')
+
+    @action(detail=True, methods=['get'])
+    def proctoring_report(self, request, pk=None):
+        """Returns comprehensive proctoring analytics, flagged candidates, and event timelines."""
+        exam = self.get_object()
+        attempts = exam.attempts.select_related('student', 'student__profile').prefetch_related('proctoring_events').order_by('-is_flagged_for_cheating', '-warning_count')
+        
+        report_items = []
+        flagged_count = 0
+        total_warnings = 0
+        for a in attempts:
+            if a.is_flagged_for_cheating:
+                flagged_count += 1
+            total_warnings += a.warning_count
+            
+            events = [{
+                'id': str(e.id),
+                'event_type': e.event_type,
+                'severity': e.severity,
+                'details': e.details,
+                'created_at': e.created_at.isoformat()
+            } for e in a.proctoring_events.all()[:20]]
+
+            report_items.append({
+                'attempt_id': str(a.id),
+                'student_id': a.student.id,
+                'student_name': a.student.get_full_name() or a.student.username,
+                'username': a.student.username,
+                'roll_number': getattr(a.student, 'profile', None).roll_number if hasattr(a.student, 'profile') else '',
+                'status': a.status,
+                'tab_switch_count': a.tab_switch_count,
+                'warning_count': a.warning_count,
+                'fullscreen_exit_count': a.fullscreen_exit_count,
+                'copy_paste_count': a.copy_paste_count,
+                'proctoring_score': float(a.proctoring_score),
+                'is_flagged': a.is_flagged_for_cheating,
+                'flag_reason': a.flag_reason,
+                'events_count': a.proctoring_events.count(),
+                'recent_events': events
+            })
+
+        return Response({
+            'exam_id': exam.id,
+            'exam_title': exam.title,
+            'exam_code': exam.code,
+            'total_candidates': len(report_items),
+            'flagged_candidates_count': flagged_count,
+            'total_warnings_issued': total_warnings,
+            'attempts': report_items
+        })
+
+    @action(detail=True, methods=['post'])
+    def reset_student_attempt(self, request, pk=None):
+        """Cancels a student attempt to allow immediate retake."""
+        exam = self.get_object()
+        student_id = request.data.get('student_id')
+        attempt_id = request.data.get('attempt_id')
+        reason = request.data.get('reason', 'Educator administrative reset / hardware glitch')
+        
+        if attempt_id:
+            attempt = get_object_or_404(ExamAttempt, id=attempt_id, exam=exam)
+        elif student_id:
+            attempt = ExamAttempt.objects.filter(exam=exam, student_id=student_id).order_by('-attempt_number').first()
+            if not attempt:
+                return Response({'detail': 'No attempt found to reset'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({'detail': 'student_id or attempt_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        student_user = attempt.student
+        attempt.status = 'CANCELLED'
+        attempt.save(update_fields=['status'])
+        
+        log_audit_event(
+            user=request.user,
+            action="RESET_ATTEMPT",
+            resource_type="ExamAttempt",
+            resource_id=str(attempt.id),
+            details=f"Cancelled attempt #{attempt.attempt_number} for student {student_user.username} on exam {exam.code}. Reason: {reason}",
+            request=request
+        )
+        
+        return Response({
+            'status': 'Attempt reset successfully',
+            'attempt_id': str(attempt.id),
+            'student_username': student_user.username,
+            'message': f"Attempt for {student_user.username} was marked CANCELLED. Student can now re-take the exam."
+        })
+
+    @action(detail=True, methods=['post'])
+    def grant_reattempt(self, request, pk=None):
+        """Grants an individual student additional attempts without changing global exam limits."""
+        exam = self.get_object()
+        student_id = request.data.get('student_id')
+        extra_attempts = int(request.data.get('extra_attempts', 1))
+        reason = request.data.get('reason', 'Educator granted retake permission')
+        
+        if not student_id:
+            return Response({'detail': 'student_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        student = get_object_or_404(User, id=student_id)
+        override, created = ExamStudentOverride.objects.get_or_create(
+            exam=exam,
+            student=student,
+            defaults={
+                'extra_attempts': extra_attempts,
+                'reason': reason,
+                'granted_by': request.user
+            }
+        )
+        if not created:
+            override.extra_attempts += extra_attempts
+            override.reason = reason
+            override.granted_by = request.user
+            override.save()
+
+        log_audit_event(
+            user=request.user,
+            action="GRANT_REATTEMPT",
+            resource_type="ExamStudentOverride",
+            resource_id=str(override.id),
+            details=f"Granted +{extra_attempts} attempt(s) to student {student.username} for exam {exam.code}. Reason: {reason}",
+            request=request
+        )
+
+        return Response({
+            'status': 'Retake permission granted',
+            'student_username': student.username,
+            'total_extra_attempts': override.extra_attempts,
+            'reason': override.reason
+        })
 
 
 class StudentExamViewSet(viewsets.ViewSet):
@@ -381,11 +633,14 @@ class StudentExamViewSet(viewsets.ViewSet):
                 seconds_left = max(0, int((in_progress.expires_at - now).total_seconds()))
                 return self._build_live_exam_payload(in_progress, seconds_left)
 
-        # Check max attempts limit
+        # Check max attempts limit (factoring in individual educator retake overrides)
+        override = ExamStudentOverride.objects.filter(exam=exam, student=user).first()
+        effective_max = exam.max_attempts + (override.extra_attempts if override else 0)
+
         completed_count = ExamAttempt.objects.filter(
             exam=exam, student=user, status__in=['SUBMITTED', 'TIMED_OUT', 'EVALUATED']
         ).count()
-        if not exam.allow_multiple_attempts and completed_count >= exam.max_attempts:
+        if not exam.allow_multiple_attempts and completed_count >= effective_max:
             return Response(
                 {'detail': 'You have already reached the maximum attempts for this examination.'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -568,6 +823,86 @@ class StudentExamViewSet(viewsets.ViewSet):
         serializer = ExamAttemptSerializer(attempts, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['post'])
+    def log_telemetry(self, request):
+        """
+        Receives live student browser telemetry: tab switches, window blur,
+        fullscreen exit, devtools detection, and copy-paste actions.
+        """
+        attempt_id = request.data.get('attempt_id')
+        event_type = request.data.get('event_type')
+        details = request.data.get('details', {})
+        client_timestamp = request.data.get('client_timestamp')
+
+        attempt = get_object_or_404(ExamAttempt, id=attempt_id, student=request.user)
+        if attempt.status != 'IN_PROGRESS':
+            return Response({'detail': 'Attempt is not active'}, status=status.HTTP_400_BAD_REQUEST)
+
+        severity = 'WARNING'
+        if event_type in ['DEVTOOLS_OPEN', 'IP_CHANGE']:
+            severity = 'CRITICAL'
+        elif event_type == 'HEARTBEAT':
+            severity = 'INFO'
+
+        ProctoringEvent.objects.create(
+            attempt=attempt,
+            event_type=event_type,
+            severity=severity,
+            details=details if isinstance(details, dict) else {'raw': str(details)},
+            client_timestamp=client_timestamp or timezone.now()
+        )
+
+        # Update attempt counters
+        if event_type == 'TAB_SWITCH':
+            attempt.tab_switch_count += 1
+            attempt.warning_count += 1
+        elif event_type == 'FULLSCREEN_EXIT':
+            attempt.fullscreen_exit_count += 1
+            attempt.warning_count += 1
+        elif event_type == 'COPY_PASTE':
+            attempt.copy_paste_count += 1
+            attempt.warning_count += 1
+        elif event_type == 'DEVTOOLS_OPEN':
+            attempt.warning_count += 2
+            attempt.is_flagged_for_cheating = True
+            attempt.flag_reason = "Developer tools detected during examination session"
+
+        # Compute proctoring score
+        penalty = (attempt.tab_switch_count * 15) + (attempt.fullscreen_exit_count * 20) + (attempt.copy_paste_count * 25)
+        attempt.proctoring_score = max(Decimal('0.00'), Decimal('100.00') - Decimal(penalty))
+
+        # Flag for cheating if threshold reached (3 tab switches or 4 warnings)
+        if (attempt.tab_switch_count >= 3 or attempt.warning_count >= 4) and not attempt.is_flagged_for_cheating:
+            attempt.is_flagged_for_cheating = True
+            attempt.flag_reason = f"Excessive browser anomalies ({attempt.tab_switch_count} tab switches recorded)"
+
+        attempt.save(update_fields=[
+            'tab_switch_count', 'fullscreen_exit_count', 'copy_paste_count',
+            'warning_count', 'proctoring_score', 'is_flagged_for_cheating', 'flag_reason'
+        ])
+
+        return Response({
+            'status': 'recorded',
+            'event_type': event_type,
+            'tab_switch_count': attempt.tab_switch_count,
+            'fullscreen_exit_count': attempt.fullscreen_exit_count,
+            'copy_paste_count': attempt.copy_paste_count,
+            'warning_count': attempt.warning_count,
+            'proctoring_score': float(attempt.proctoring_score),
+            'is_flagged': attempt.is_flagged_for_cheating,
+            'flag_reason': attempt.flag_reason,
+            'max_allowed_warnings': 3,
+            'remaining_warnings': max(0, 3 - attempt.tab_switch_count)
+        })
+
+    @action(detail=False, methods=['get'])
+    def printable_scorecard(self, request):
+        """Returns official print-ready HTML scorecard for the authenticated student."""
+        attempt_id = request.query_params.get('attempt_id')
+        attempt = get_object_or_404(ExamAttempt, id=attempt_id, student=request.user)
+        html_content = generate_printable_scorecard_html(attempt)
+        return HttpResponse(html_content, content_type='text/html')
+
 
 class StudentManagementViewSet(BaseTenantViewSet):
     serializer_class = UserProfileSerializer
@@ -581,6 +916,12 @@ class StudentManagementViewSet(BaseTenantViewSet):
     @action(detail=False, methods=['post'])
     def enroll_student(self, request):
         inst = self.get_institution()
+        
+        # Check student enrollment quota
+        allowed, err_msg = check_student_quota(inst, 1)
+        if not allowed:
+            return Response({'detail': err_msg}, status=status.HTTP_400_BAD_REQUEST)
+
         data = request.data
         username = data.get('username', '').strip()
         email = data.get('email', '').strip()
@@ -617,11 +958,26 @@ class StudentManagementViewSet(BaseTenantViewSet):
             batch=batch
         )
 
+        log_audit_event(
+            user=request.user,
+            action="ENROLL_STUDENT",
+            resource_type="UserProfile",
+            resource_id=str(profile.id),
+            details=f"Enrolled student {username} (Roll: {profile.roll_number}) in {inst.name}",
+            request=request
+        )
+
         return Response(UserProfileSerializer(profile).data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'])
     def bulk_import(self, request):
         inst = self.get_institution()
+        
+        # Pre-check student quota
+        allowed, err_msg = check_student_quota(inst, 1)
+        if not allowed:
+            return Response({'detail': err_msg}, status=status.HTTP_400_BAD_REQUEST)
+
         csv_file = request.FILES.get('file')
         csv_text = request.data.get('csv_text', '')
         
@@ -632,6 +988,16 @@ class StudentManagementViewSet(BaseTenantViewSet):
             return Response({'detail': 'CSV content is required'}, status=status.HTTP_400_BAD_REQUEST)
             
         result = bulk_import_students(inst, csv_text)
+
+        log_audit_event(
+            user=request.user,
+            action="BULK_IMPORT_STUDENTS",
+            resource_type="UserProfile",
+            resource_id="",
+            details=f"Bulk imported {result.get('created_count', 0)} students into {inst.name}",
+            request=request
+        )
+
         return Response(result)
 
     @action(detail=False, methods=['get'])

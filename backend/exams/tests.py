@@ -246,3 +246,144 @@ class ExamPlatformTestCase(TestCase):
         self.assertEqual(res['created_count'], 1)
         self.assertEqual(len(res['errors']), 0)
         self.assertTrue(Question.objects.filter(institution=self.inst_a, question_text__icontains="acceleration due to gravity").exists())
+
+    def test_proctoring_telemetry_and_anomalies(self):
+        """Student browser anomalies are recorded and automatically flag attempts exceeding limits."""
+        self.client.force_authenticate(user=self.student_1)
+        start_res = self.client.post(f'/api/student-portal/{self.exam.id}/start_attempt/')
+        attempt_id = start_res.data['attempt_id']
+
+        # 1. Log tab switch 1
+        t1 = self.client.post('/api/student-portal/log_telemetry/', {
+            'attempt_id': attempt_id,
+            'event_type': 'TAB_SWITCH',
+            'details': {'screen': 'blur'}
+        }, format='json')
+        self.assertEqual(t1.status_code, 200)
+        self.assertEqual(t1.data['tab_switch_count'], 1)
+        self.assertFalse(t1.data['is_flagged'])
+
+        # 2. Log tab switches 2 and 3 -> should trigger auto-flagging at threshold 3
+        self.client.post('/api/student-portal/log_telemetry/', {'attempt_id': attempt_id, 'event_type': 'TAB_SWITCH'}, format='json')
+        t3 = self.client.post('/api/student-portal/log_telemetry/', {'attempt_id': attempt_id, 'event_type': 'TAB_SWITCH'}, format='json')
+        self.assertEqual(t3.status_code, 200)
+        self.assertEqual(t3.data['tab_switch_count'], 3)
+        self.assertTrue(t3.data['is_flagged'])
+        self.assertIn('3 tab switches', t3.data['flag_reason'])
+
+        # 3. Educator proctoring report verification
+        self.client.force_authenticate(user=self.educator_a)
+        rep_res = self.client.get(f'/api/exams/{self.exam.id}/proctoring_report/')
+        self.assertEqual(rep_res.status_code, 200)
+        self.assertEqual(rep_res.data['flagged_candidates_count'], 1)
+        self.assertEqual(len(rep_res.data['attempts']), 1)
+        self.assertTrue(rep_res.data['attempts'][0]['is_flagged'])
+        self.assertEqual(rep_res.data['attempts'][0]['tab_switch_count'], 3)
+
+    def test_student_reattempt_and_override_workflow(self):
+        """Educator can grant extra attempts or reset attempts for students facing issues."""
+        self.client.force_authenticate(user=self.student_1)
+        start_res = self.client.post(f'/api/student-portal/{self.exam.id}/start_attempt/')
+        attempt_id = start_res.data['attempt_id']
+
+        # Submit attempt 1
+        sub_res = self.client.post('/api/student-portal/submit_attempt/', {'attempt_id': attempt_id}, format='json')
+        self.assertEqual(sub_res.status_code, 200)
+
+        # Attempt 2 should be rejected because exam has max_attempts=1
+        start_2 = self.client.post(f'/api/student-portal/{self.exam.id}/start_attempt/')
+        self.assertEqual(start_2.status_code, 400)
+        self.assertIn('maximum attempts', start_2.data['detail'])
+
+        # Educator grants extra attempt
+        self.client.force_authenticate(user=self.educator_a)
+        grant_res = self.client.post(f'/api/exams/{self.exam.id}/grant_reattempt/', {
+            'student_id': self.student_1.id,
+            'extra_attempts': 1,
+            'reason': 'Power outage at candidate test center'
+        }, format='json')
+        self.assertEqual(grant_res.status_code, 200)
+        self.assertEqual(grant_res.data['total_extra_attempts'], 1)
+
+        # Student can now start attempt 2!
+        self.client.force_authenticate(user=self.student_1)
+        start_2_allowed = self.client.post(f'/api/student-portal/{self.exam.id}/start_attempt/')
+        self.assertEqual(start_2_allowed.status_code, 200)
+
+        # Educator can also reset / cancel an attempt
+        self.client.force_authenticate(user=self.educator_a)
+        reset_res = self.client.post(f'/api/exams/{self.exam.id}/reset_student_attempt/', {
+            'attempt_id': attempt_id,
+            'reason': 'Administrative reset'
+        }, format='json')
+        self.assertEqual(reset_res.status_code, 200)
+        att1 = ExamAttempt.objects.get(id=attempt_id)
+        self.assertEqual(att1.status, 'CANCELLED')
+
+    def test_printable_reports_html(self):
+        """Official print-ready HTML scorecards and merit lists render cleanly."""
+        self.client.force_authenticate(user=self.student_1)
+        start_res = self.client.post(f'/api/student-portal/{self.exam.id}/start_attempt/')
+        attempt_id = start_res.data['attempt_id']
+        self.client.post('/api/student-portal/submit_attempt/', {'attempt_id': attempt_id}, format='json')
+
+        # 1. Student printable scorecard
+        scorecard_res = self.client.get(f'/api/student-portal/printable_scorecard/?attempt_id={attempt_id}')
+        self.assertEqual(scorecard_res.status_code, 200)
+        self.assertIn('text/html', scorecard_res['Content-Type'])
+        content = scorecard_res.content.decode('utf-8')
+        self.assertIn('STU-001', content)
+        self.assertIn('Apex Academy', content)
+        self.assertIn('@media print', content)
+
+        # 2. Educator printable merit list
+        self.client.force_authenticate(user=self.educator_a)
+        merit_res = self.client.get(f'/api/exams/{self.exam.id}/printable_merit_list/')
+        self.assertEqual(merit_res.status_code, 200)
+        self.assertIn('text/html', merit_res['Content-Type'])
+        merit_content = merit_res.content.decode('utf-8')
+        self.assertIn('Official Merit List', merit_content)
+        self.assertIn('PM-01', merit_content)
+
+    def test_subscription_usage_and_quota_enforcement(self):
+        """Enforces multi-tenant subscription tiers and student quotas."""
+        self.client.force_authenticate(user=self.educator_a)
+        
+        # 1. Check usage stats
+        usage_res = self.client.get('/api/institutions/subscription_usage/')
+        self.assertEqual(usage_res.status_code, 200)
+        self.assertIn('students', usage_res.data)
+        self.assertIn('monthly_exams', usage_res.data)
+        self.assertIn('question_bank', usage_res.data)
+
+        # 2. Artificially set max_students = 2 (inst_a currently has 2 students: student_1 and student_2)
+        self.inst_a.max_students = 2
+        self.inst_a.save()
+
+        # 3. Attempting to enroll a 3rd student should be blocked by quota
+        enroll_res = self.client.post('/api/students/enroll_student/', {
+            'username': 'student_3_overflow',
+            'email': 'student3@example.com',
+            'first_name': 'Overflow',
+            'last_name': 'Candidate',
+            'roll_number': 'STU-003'
+        }, format='json')
+        self.assertEqual(enroll_res.status_code, 400)
+        self.assertIn('Student limit reached', enroll_res.data['detail'])
+
+    def test_institutional_audit_logging(self):
+        """Administrative actions create structured audit records."""
+        self.client.force_authenticate(user=self.educator_a)
+
+        # Update branding -> logs audit event
+        self.client.patch('/api/institutions/update_branding/', {
+            'tagline': 'New tagline for Apex Academy'
+        }, format='json')
+
+        # Check audit log endpoint
+        audit_res = self.client.get('/api/institutions/audit_logs/')
+        self.assertEqual(audit_res.status_code, 200)
+        self.assertTrue(len(audit_res.data) > 0)
+        actions = [log['action'] for log in audit_res.data]
+        self.assertIn('UPDATE_BRANDING', actions)
+

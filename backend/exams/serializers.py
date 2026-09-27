@@ -3,7 +3,8 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import (
     Institution, Batch, UserProfile, Subject, Topic, Question,
-    Exam, ExamSection, ExamQuestion, ExamAttempt, StudentAnswer, Announcement
+    Exam, ExamSection, ExamQuestion, ExamAttempt, StudentAnswer, Announcement,
+    ProctoringEvent, ExamStudentOverride
 )
 
 
@@ -191,13 +192,49 @@ class ExamAttemptSerializer(serializers.ModelSerializer):
             'status', 'time_spent_seconds', 'total_score', 'max_possible_score',
             'percentage', 'rank', 'percentile', 'accuracy_rate',
             'correct_count', 'incorrect_count', 'unattempted_count',
-            'tab_switch_count', 'created_at'
+            'tab_switch_count', 'warning_count', 'fullscreen_exit_count',
+            'copy_paste_count', 'proctoring_score', 'is_flagged_for_cheating',
+            'flag_reason', 'created_at'
         ]
         read_only_fields = [
             'id', 'started_at', 'total_score', 'max_possible_score', 'percentage',
             'rank', 'percentile', 'accuracy_rate', 'correct_count', 'incorrect_count',
             'unattempted_count', 'created_at'
         ]
+
+    def get_roll_number(self, obj):
+        profile = getattr(obj.student, 'profile', None)
+        return profile.roll_number if profile else ''
+
+
+class ProctoringEventSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='attempt.student.get_full_name', read_only=True)
+    student_username = serializers.CharField(source='attempt.student.username', read_only=True)
+    exam_code = serializers.CharField(source='attempt.exam.code', read_only=True)
+
+    class Meta:
+        model = ProctoringEvent
+        fields = [
+            'id', 'attempt', 'student_name', 'student_username', 'exam_code',
+            'event_type', 'severity', 'details', 'client_timestamp', 'created_at'
+        ]
+        read_only_fields = ['id', 'created_at']
+
+
+class ExamStudentOverrideSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='student.get_full_name', read_only=True)
+    student_username = serializers.CharField(source='student.username', read_only=True)
+    roll_number = serializers.SerializerMethodField()
+    granted_by_name = serializers.CharField(source='granted_by.get_full_name', read_only=True)
+
+    class Meta:
+        model = ExamStudentOverride
+        fields = [
+            'id', 'exam', 'student', 'student_name', 'student_username',
+            'roll_number', 'extra_attempts', 'reason', 'granted_by',
+            'granted_by_name', 'created_at'
+        ]
+        read_only_fields = ['id', 'created_at']
 
     def get_roll_number(self, obj):
         profile = getattr(obj.student, 'profile', None)

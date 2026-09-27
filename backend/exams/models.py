@@ -337,6 +337,11 @@ class ExamAttempt(models.Model):
     user_agent = models.CharField(max_length=255, blank=True, default="")
     tab_switch_count = models.PositiveIntegerField(default=0)
     warning_count = models.PositiveIntegerField(default=0)
+    fullscreen_exit_count = models.PositiveIntegerField(default=0)
+    copy_paste_count = models.PositiveIntegerField(default=0)
+    proctoring_score = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('100.00'))
+    is_flagged_for_cheating = models.BooleanField(default=False)
+    flag_reason = models.CharField(max_length=255, blank=True, default="")
     
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -521,3 +526,61 @@ class Announcement(models.Model):
 
     def __str__(self):
         return f"[{self.institution.code}] {self.title}"
+
+
+class ProctoringEvent(models.Model):
+    """
+    Granular audit log of student browser and environmental anomalies during a live CBT exam attempt.
+    Tracks tab switches, fullscreen escapes, copy-paste attempts, and devtools openings.
+    """
+    EVENT_CHOICES = [
+        ('TAB_SWITCH', 'Tab Switch (Lost Focus)'),
+        ('WINDOW_BLUR', 'Window Blur / Application Switch'),
+        ('FULLSCREEN_EXIT', 'Fullscreen Mode Exited'),
+        ('COPY_PASTE', 'Copy / Cut / Paste Intercepted'),
+        ('DEVTOOLS_OPEN', 'Developer Tools Detected'),
+        ('RIGHT_CLICK', 'Context Menu Intercepted'),
+        ('HEARTBEAT', 'Periodic Live Heartbeat'),
+        ('IP_CHANGE', 'IP Address Changed Mid-Exam'),
+    ]
+    SEVERITY_CHOICES = [
+        ('INFO', 'Informational'),
+        ('WARNING', 'Warning'),
+        ('CRITICAL', 'Critical Violation'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    attempt = models.ForeignKey(ExamAttempt, on_delete=models.CASCADE, related_name='proctoring_events')
+    event_type = models.CharField(max_length=50, choices=EVENT_CHOICES)
+    severity = models.CharField(max_length=20, choices=SEVERITY_CHOICES, default='WARNING')
+    details = models.JSONField(default=dict, blank=True)
+    client_timestamp = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.attempt.student.username} - {self.event_type} ({self.severity}) at {self.created_at}"
+
+
+class ExamStudentOverride(models.Model):
+    """
+    Grants an individual student exceptional re-attempt permissions or extra attempts
+    on a specific exam without altering global exam rules for the whole batch.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE, related_name='student_overrides')
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='exam_overrides')
+    extra_attempts = models.PositiveIntegerField(default=1, help_text="Number of additional attempts granted")
+    reason = models.CharField(max_length=255, blank=True, default="Technical glitch / Retake approved by educator")
+    granted_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='granted_overrides')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('exam', 'student')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Override for {self.student.username} on {self.exam.code}: +{self.extra_attempts} attempts"
+
