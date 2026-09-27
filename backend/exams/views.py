@@ -155,6 +155,20 @@ class BatchViewSet(BaseTenantViewSet):
         inst = self.get_institution()
         serializer.save(institution=inst)
 
+    @action(detail=True, methods=['get'])
+    def students(self, request, pk=None):
+        batch = self.get_object()
+        students = batch.students.select_related('user').order_by('roll_number', 'user__username')
+        serializer = UserProfileSerializer(students, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['get'])
+    def exams(self, request, pk=None):
+        batch = self.get_object()
+        exams = batch.assigned_exams.all().order_by('-start_time')
+        serializer = ExamListSerializer(exams, many=True)
+        return Response(serializer.data)
+
 
 class SubjectViewSet(BaseTenantViewSet):
     serializer_class = SubjectSerializer
@@ -262,6 +276,38 @@ class QuestionViewSet(BaseTenantViewSet):
         response = HttpResponse(csv_content, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="sample_questions.csv"'
         return response
+
+    @action(detail=True, methods=['post'])
+    def duplicate(self, request, pk=None):
+        inst = self.get_institution()
+        allowed, err_msg = check_question_quota(inst, 1)
+        if not allowed:
+            raise ValidationError({'detail': err_msg})
+        original = self.get_object()
+        clone = Question.objects.create(
+            institution=inst,
+            subject=original.subject,
+            topic=original.topic,
+            question_text=f"[Copy] {original.question_text}",
+            question_type=original.question_type,
+            difficulty=original.difficulty,
+            options=original.options,
+            correct_answers=original.correct_answers,
+            explanation=original.explanation,
+            tags=original.tags,
+            default_marks=original.default_marks,
+            default_negative_marks=original.default_negative_marks,
+            created_by=request.user
+        )
+        log_audit_event(
+            user=request.user,
+            action="DUPLICATE_QUESTION",
+            resource_type="Question",
+            resource_id=str(clone.id),
+            details=f"Duplicated question #{original.id} -> #{clone.id}",
+            request=request
+        )
+        return Response(QuestionSerializer(clone).data, status=status.HTTP_201_CREATED)
 
 
 class ExamViewSet(BaseTenantViewSet):
@@ -547,6 +593,65 @@ class ExamViewSet(BaseTenantViewSet):
             'total_extra_attempts': override.extra_attempts,
             'reason': override.reason
         })
+
+    @action(detail=True, methods=['post'])
+    def duplicate(self, request, pk=None):
+        """Duplicates an existing exam as a new DRAFT copy with all questions and settings intact."""
+        original = self.get_object()
+        inst = self.get_institution()
+        
+        allowed, err_msg = check_exam_quota(inst)
+        if not allowed:
+            return Response({'detail': err_msg}, status=status.HTTP_400_BAD_REQUEST)
+            
+        import uuid
+        unique_suffix = uuid.uuid4().hex[:6].upper()
+        clone = Exam.objects.create(
+            institution=inst,
+            title=f"[Copy] {original.title}",
+            code=f"{original.code[:30]}-{unique_suffix}",
+            description=original.description,
+            instructions=original.instructions,
+            duration_minutes=original.duration_minutes,
+            total_marks=original.total_marks,
+            passing_percentage=original.passing_percentage,
+            enable_negative_marking=original.enable_negative_marking,
+            default_marks_per_question=original.default_marks_per_question,
+            default_negative_marks=original.default_negative_marks,
+            randomize_questions=original.randomize_questions,
+            randomize_options=original.randomize_options,
+            show_results_immediately=original.show_results_immediately,
+            auto_submit_on_timeout=original.auto_submit_on_timeout,
+            status='DRAFT',
+            results_published=False,
+            start_time=original.start_time,
+            end_time=original.end_time,
+            created_by=request.user
+        )
+        
+        # Copy question linkages
+        for eq in original.exam_questions.all():
+            ExamQuestion.objects.create(
+                exam=clone,
+                question=eq.question,
+                order=eq.order,
+                marks=eq.marks,
+                negative_marks=eq.negative_marks
+            )
+            
+        # Copy batches
+        clone.batches.set(original.batches.all())
+        clone.recalculate_total_marks()
+        
+        log_audit_event(
+            user=request.user,
+            action="DUPLICATE_EXAM",
+            resource_type="Exam",
+            resource_id=str(clone.id),
+            details=f"Duplicated exam #{original.id} ({original.code}) -> #{clone.id} ({clone.code})",
+            request=request
+        )
+        return Response(ExamDetailSerializer(clone).data, status=status.HTTP_201_CREATED)
 
 
 class StudentExamViewSet(viewsets.ViewSet):
@@ -906,6 +1011,106 @@ class StudentExamViewSet(viewsets.ViewSet):
         attempt = get_object_or_404(ExamAttempt, id=attempt_id, student=request.user)
         html_content = generate_printable_scorecard_html(attempt)
         return HttpResponse(html_content, content_type='text/html')
+
+    @action(detail=False, methods=['get'])
+    def performance_summary(self, request):
+        """Returns student-specific performance statistics, trends, and topic breakdown."""
+        user = request.user
+        profile = get_user_profile(user)
+        inst = profile.institution
+        
+        attempts = ExamAttempt.objects.filter(
+            student=user,
+            status__in=['EVALUATED', 'SUBMITTED', 'TIMED_OUT']
+        ).select_related('exam').order_by('-submitted_at')
+        
+        total_attempted = attempts.count()
+        total_assigned = 0
+        if inst:
+            if profile.batch:
+                total_assigned = Exam.objects.filter(institution=inst).filter(
+                    models.Q(batches=profile.batch) | models.Q(batches__isnull=True)
+                ).exclude(status='DRAFT').distinct().count()
+            else:
+                total_assigned = Exam.objects.filter(institution=inst).exclude(status='DRAFT').count()
+
+        if total_attempted == 0:
+            return Response({
+                'total_exams_assigned': total_assigned,
+                'total_exams_attempted': 0,
+                'average_percentage': 0.0,
+                'average_accuracy': 0.0,
+                'highest_percentile': 0.0,
+                'recent_trends': [],
+                'subject_breakdown': [],
+                'strong_areas': [],
+                'weak_areas': []
+            })
+            
+        avg_pct = attempts.aggregate(models.Avg('percentage'))['percentage__avg'] or 0.0
+        avg_acc = attempts.aggregate(models.Avg('accuracy_rate'))['accuracy_rate__avg'] or 0.0
+        max_perc = attempts.aggregate(models.Max('percentile'))['percentile__max'] or 0.0
+        
+        recent_trends = []
+        for att in attempts[:10]:
+            recent_trends.append({
+                'attempt_id': str(att.id),
+                'exam_id': att.exam.id,
+                'exam_title': att.exam.title,
+                'exam_code': att.exam.code,
+                'date': att.submitted_at.isoformat() if att.submitted_at else att.started_at.isoformat(),
+                'score': float(att.total_score),
+                'max_score': float(att.max_possible_score),
+                'percentage': float(att.percentage),
+                'percentile': float(att.percentile),
+                'rank': att.rank,
+                'accuracy_rate': float(att.accuracy_rate)
+            })
+            
+        from collections import defaultdict
+        subj_stats = defaultdict(lambda: {'correct': 0, 'total': 0, 'marks': Decimal('0.00')})
+        
+        student_answers = StudentAnswer.objects.filter(
+            attempt__student=user,
+            attempt__status__in=['EVALUATED', 'SUBMITTED', 'TIMED_OUT']
+        ).select_related('question__subject')
+        
+        for ans in student_answers:
+            sname = ans.question.subject.name if (ans.question and ans.question.subject) else 'General'
+            subj_stats[sname]['total'] += 1
+            if ans.is_correct:
+                subj_stats[sname]['correct'] += 1
+            subj_stats[sname]['marks'] += ans.awarded_marks
+            
+        subject_breakdown = []
+        strong_areas = []
+        weak_areas = []
+        for sname, sinfo in subj_stats.items():
+            tot = sinfo['total']
+            acc = round((sinfo['correct'] / tot) * 100.0, 1) if tot > 0 else 0.0
+            subject_breakdown.append({
+                'subject': sname,
+                'total_questions': tot,
+                'correct_answers': sinfo['correct'],
+                'accuracy': acc,
+                'total_marks_earned': float(sinfo['marks'])
+            })
+            if acc >= 70.0 and tot >= 2:
+                strong_areas.append(sname)
+            elif acc < 50.0 and tot >= 2:
+                weak_areas.append(sname)
+
+        return Response({
+            'total_exams_assigned': total_assigned,
+            'total_exams_attempted': total_attempted,
+            'average_percentage': round(float(avg_pct), 2),
+            'average_accuracy': round(float(avg_acc), 2),
+            'highest_percentile': round(float(max_perc), 2),
+            'recent_trends': recent_trends,
+            'subject_breakdown': subject_breakdown,
+            'strong_areas': strong_areas,
+            'weak_areas': weak_areas
+        })
 
 
 class StudentManagementViewSet(BaseTenantViewSet):

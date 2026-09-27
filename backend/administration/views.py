@@ -20,6 +20,7 @@ from .serializers import (
     ResourceItemSerializer,
     AuditLogSerializer,
 )
+from exams.models import Institution, Exam, Question, ExamAttempt, UserProfile
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -149,6 +150,18 @@ class AdminStatsView(APIView):
         staff_users = User.objects.filter(is_staff=True).count()
         active_users = User.objects.filter(is_active=True).count()
 
+        total_institutions = Institution.objects.count()
+        active_institutions = Institution.objects.filter(is_active=True).count()
+        tier_counts = {
+            tier: Institution.objects.filter(subscription_tier=tier).count()
+            for tier, _ in Institution.TIER_CHOICES
+        }
+        total_exams = Exam.objects.count()
+        total_questions = Question.objects.count()
+        total_attempts = ExamAttempt.objects.count()
+        total_students = UserProfile.objects.filter(role='STUDENT').count()
+        total_educators = UserProfile.objects.filter(role__in=['INSTITUTE_ADMIN', 'TEACHER']).count()
+
         total_resources = ResourceItem.objects.count()
         active_resources = ResourceItem.objects.filter(status=ResourceItem.Status.ACTIVE).count()
         draft_resources = ResourceItem.objects.filter(status=ResourceItem.Status.DRAFT).count()
@@ -169,6 +182,14 @@ class AdminStatsView(APIView):
                 'total_users': total_users,
                 'staff_users': staff_users,
                 'active_users': active_users,
+                'total_institutions': total_institutions,
+                'active_institutions': active_institutions,
+                'tier_counts': tier_counts,
+                'total_exams': total_exams,
+                'total_questions': total_questions,
+                'total_attempts': total_attempts,
+                'total_students': total_students,
+                'total_educators': total_educators,
                 'total_resources': total_resources,
                 'active_resources': active_resources,
                 'draft_resources': draft_resources,

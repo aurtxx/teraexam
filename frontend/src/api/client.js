@@ -157,6 +157,10 @@ export const examsApi = {
   createExam: (data) => apiRequest('/api/exams/', { method: 'POST', body: data }),
   updateExam: (id, data) => apiRequest(`/api/exams/${id}/`, { method: 'PATCH', body: data }),
   deleteExam: (id) => apiRequest(`/api/exams/${id}/`, { method: 'DELETE' }),
+  duplicateExam: (examId) => apiRequest(`/api/exams/${examId}/duplicate/`, { method: 'POST' }),
+  duplicateQuestion: (questionId) => apiRequest(`/api/questions/${questionId}/duplicate/`, { method: 'POST' }),
+  getBatchStudents: (batchId) => apiRequest(`/api/batches/${batchId}/students/`),
+  getBatchExams: (batchId) => apiRequest(`/api/batches/${batchId}/exams/`),
   addQuestionsToExam: (examId, questionIds, marks, negativeMarks) => 
     apiRequest(`/api/exams/${examId}/add_questions/`, { method: 'POST', body: { question_ids: questionIds, marks, negative_marks: negativeMarks } }),
   removeQuestionFromExam: (examId, questionId) => 
@@ -191,9 +195,19 @@ export const studentApi = {
   saveAnswer: (payload) => apiRequest('/api/student-portal/save_answer/', { method: 'POST', body: payload }),
   submitAttempt: (attemptId) => apiRequest('/api/student-portal/submit_attempt/', { method: 'POST', body: { attempt_id: attemptId } }),
   getScorecard: (attemptId) => apiRequest(`/api/student-portal/scorecard/?attempt_id=${attemptId}`),
+  getPerformanceSummary: () => apiRequest('/api/student-portal/performance_summary/'),
   getHistory: () => apiRequest('/api/student-portal/history/'),
   logTelemetry: (payload) => apiRequest('/api/student-portal/log_telemetry/', { method: 'POST', body: payload }),
   getPrintableScorecardUrl: (attemptId) => `/api/student-portal/printable_scorecard/?attempt_id=${attemptId}`,
+};
+
+// Platform Admin Multi-Tenant & SaaS APIs
+export const platformAdminApi = {
+  getStats: () => apiRequest('/api/admin/dashboard/stats/'),
+  listInstitutions: () => apiRequest('/api/institutions/'),
+  createInstitution: (data) => apiRequest('/api/institutions/', { method: 'POST', body: data }),
+  updateInstitution: (id, data) => apiRequest(`/api/institutions/${id}/`, { method: 'PATCH', body: data }),
+  deleteInstitution: (id) => apiRequest(`/api/institutions/${id}/`, { method: 'DELETE' }),
 };
 
 // Legacy System Admin APIs

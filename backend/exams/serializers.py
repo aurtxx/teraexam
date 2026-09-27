@@ -28,6 +28,29 @@ class InstitutionSerializer(serializers.ModelSerializer):
     def get_exam_count(self, obj):
         return obj.exams.count()
 
+    def validate(self, attrs):
+        from django.utils.text import slugify
+        import uuid
+        name = attrs.get('name', '').strip()
+        slug = attrs.get('slug', '').strip()
+        if not slug and name:
+            base_slug = slugify(name)[:180] or "institute"
+            candidate = base_slug
+            idx = 1
+            while Institution.objects.filter(slug=candidate).exclude(id=self.instance.id if self.instance else None).exists():
+                candidate = f"{base_slug}-{idx}"
+                idx += 1
+            attrs['slug'] = candidate
+
+        code = attrs.get('code', '').strip()
+        if not code and name:
+            clean_name = slugify(name)[:10].upper().replace('-', '') or "INST"
+            attrs['code'] = f"{clean_name}-{uuid.uuid4().hex[:4].upper()}"
+        elif code:
+            attrs['code'] = code.upper()
+
+        return attrs
+
 
 class BatchSerializer(serializers.ModelSerializer):
     student_count = serializers.SerializerMethodField()
@@ -35,7 +58,7 @@ class BatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Batch
         fields = ['id', 'institution', 'name', 'code', 'description', 'academic_year', 'is_active', 'student_count', 'created_at']
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'institution', 'created_at']
 
     def get_student_count(self, obj):
         return obj.students.count()
@@ -55,7 +78,7 @@ class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = ['id', 'institution', 'name', 'code', 'description', 'topics', 'question_count', 'created_at']
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'institution', 'created_at']
 
     def get_question_count(self, obj):
         return obj.questions.count()
@@ -270,7 +293,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
             'target_batches', 'batch_names', 'is_published',
             'created_by', 'created_by_name', 'created_at'
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'institution', 'created_at', 'created_by']
 
     def get_batch_names(self, obj):
         return [b.name for b in obj.target_batches.all()]
@@ -291,4 +314,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'institution', 'institution_name', 'role', 'phone', 'roll_number',
             'batch', 'batch_name', 'avatar_url', 'created_at'
         ]
-        read_only_fields = ['id', 'user_id', 'created_at']
+        read_only_fields = ['id', 'user_id', 'institution', 'created_at']

@@ -30,7 +30,16 @@ export function AdminLayout({ activeTab, onTabChange, children }) {
   if (isStudent) {
     navItems = [
       { id: 'student-portal', label: 'My Assessments', icon: GraduationCap },
+      { id: 'student-analytics', label: 'Performance Analytics', icon: Award },
       { id: 'student-announcements', label: 'Notices & Alerts', icon: Bell },
+    ];
+  } else if (isPlatformAdmin) {
+    navItems = [
+      { id: 'platform-dashboard', label: 'Platform Overview', icon: Server },
+      { id: 'institutions', label: 'Institutions & Tenants', icon: GraduationCap },
+      { id: 'users', label: 'User Directory & RBAC', icon: Users },
+      { id: 'resources', label: 'Resource Catalog', icon: Layers },
+      { id: 'audit-logs', label: 'Security & Audit Trail', icon: History },
     ];
   } else {
     navItems = [
@@ -40,7 +49,6 @@ export function AdminLayout({ activeTab, onTabChange, children }) {
       { id: 'students', label: 'Students & Batches', icon: Users },
       { id: 'announcements', label: 'Announcements', icon: Bell },
       { id: 'branding', label: 'Institute Branding', icon: Palette },
-      { id: 'resources', label: 'System Resources', icon: Layers },
       { id: 'audit-logs', label: 'Security & Audit Logs', icon: History },
     ];
   }

@@ -15,8 +15,12 @@ import { InstituteSettings } from './pages/educator/InstituteSettings';
 import { StudentPortal } from './pages/student/StudentPortal';
 import { CbtExamView } from './pages/student/CbtExamView';
 import { ScorecardView } from './pages/student/ScorecardView';
+import { StudentPerformanceAnalytics } from './pages/student/StudentPerformanceAnalytics';
 
 // Platform Control Plane Views
+import { PlatformAdminDashboard } from './pages/admin/PlatformAdminDashboard';
+import { InstitutionsManager } from './pages/admin/InstitutionsManager';
+import { Users } from './pages/Users';
 import { Resources } from './pages/Resources';
 import { AuditLogs } from './pages/AuditLogs';
 
@@ -24,7 +28,7 @@ import { Toast } from './components/Toast';
 import { Loader2 } from 'lucide-react';
 
 function TeraExamApp() {
-  const { isAuthenticated, isLoading, isStudent } = useAuth();
+  const { isAuthenticated, isLoading, isStudent, isPlatformAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [toast, setToast] = useState(null);
 
@@ -36,10 +40,12 @@ function TeraExamApp() {
   useEffect(() => {
     if (isStudent) {
       setActiveTab('student-portal');
+    } else if (isPlatformAdmin) {
+      setActiveTab('platform-dashboard');
     } else {
       setActiveTab('dashboard');
     }
-  }, [isStudent]);
+  }, [isStudent, isPlatformAdmin]);
 
   const showToast = (message, type = 'info') => {
     setToast({ message, type });
@@ -101,11 +107,38 @@ function TeraExamApp() {
               onViewScorecard={(attemptId) => setScorecardAttemptId(attemptId)}
             />
           )}
+          {activeTab === 'student-analytics' && (
+            <StudentPerformanceAnalytics 
+              onBack={() => setActiveTab('student-portal')}
+              onViewScorecard={(attemptId) => setScorecardAttemptId(attemptId)}
+            />
+          )}
         </>
       )}
 
-      {/* Educator Views */}
-      {!isStudent && (
+      {/* Platform Root Admin Views */}
+      {isPlatformAdmin && !isStudent && (
+        <>
+          {activeTab === 'platform-dashboard' && (
+            <PlatformAdminDashboard onNavigate={setActiveTab} showToast={showToast} />
+          )}
+          {activeTab === 'institutions' && (
+            <InstitutionsManager showToast={showToast} />
+          )}
+          {activeTab === 'users' && (
+            <Users showToast={showToast} />
+          )}
+          {activeTab === 'resources' && (
+            <Resources showToast={showToast} />
+          )}
+          {activeTab === 'audit-logs' && (
+            <AuditLogs />
+          )}
+        </>
+      )}
+
+      {/* Educator / Institute Admin / Teacher Views */}
+      {!isStudent && !isPlatformAdmin && (
         <>
           {activeTab === 'dashboard' && <EducatorDashboard onNavigate={setActiveTab} />}
           {activeTab === 'questions' && <QuestionBank showToast={showToast} />}
@@ -113,7 +146,6 @@ function TeraExamApp() {
           {activeTab === 'students' && <StudentManager showToast={showToast} />}
           {activeTab === 'announcements' && <AnnouncementsManager showToast={showToast} />}
           {activeTab === 'branding' && <InstituteSettings showToast={showToast} />}
-          {activeTab === 'resources' && <Resources showToast={showToast} />}
           {activeTab === 'audit-logs' && <AuditLogs />}
         </>
       )}
