@@ -35,6 +35,8 @@ export function CbtExamView({ examId, onComplete, onExit }) {
   const [tabSwitchCount, setTabSwitchCount] = useState(0);
   const [proctorWarning, setProctorWarning] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [startError, setStartError] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
 
   // Answers Map: { [question_id]: { selected_options: [], numerical_value: '', text_value: '', is_marked_for_review: false, status: '' } }
   const [answers, setAnswers] = useState({});
@@ -174,8 +176,8 @@ export function CbtExamView({ examId, onComplete, onExit }) {
       startTimer(res.seconds_remaining);
     } catch (err) {
       console.error('Failed to start exam:', err);
-      alert('Could not start exam: ' + (err.message || 'Please check with your educator.'));
-      onExit();
+      const msg = err.data?.detail || err.message || 'Please check with your educator.';
+      setStartError(typeof msg === 'object' ? JSON.stringify(msg) : msg);
     } finally {
       setLoading(false);
     }
@@ -198,7 +200,7 @@ export function CbtExamView({ examId, onComplete, onExit }) {
   };
 
   const handleAutoSubmit = async () => {
-    alert('Examination time limit has expired. Responses are now being finalized and submitted.');
+    showSecurityNotice('Notice: Examination time limit has expired. Responses are now being finalized and submitted.');
     await executeSubmission();
   };
 
@@ -302,7 +304,8 @@ export function CbtExamView({ examId, onComplete, onExit }) {
       onComplete(examData.attempt_id);
     } catch (err) {
       console.error('Submission error:', err);
-      alert('Submission failed: ' + (err.message || 'Unknown error'));
+      const msg = err.data?.detail || err.message || 'Unknown error occurred while submitting.';
+      setSubmitError(typeof msg === 'object' ? JSON.stringify(msg) : msg);
       setSubmitting(false);
     }
   };
@@ -314,6 +317,25 @@ export function CbtExamView({ examId, onComplete, onExit }) {
           <Loader2 size={44} className="animate-spin text-primary mx-auto mb-3" />
           <h2 className="font-headline-sm text-headline-sm text-on-surface mb-1">Connecting to Secure CBT Environment...</h2>
           <p className="font-body-sm text-body-sm text-on-surface-variant">Calibrating question sheets, proctoring stream & timer channels</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (startError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-surface p-4 text-on-surface">
+        <div className="max-w-md w-full text-center p-8 bg-surface-container-lowest rounded-xl shadow-md border border-error/30">
+          <ShieldAlert size={48} className="text-error mx-auto mb-3" />
+          <h2 className="text-lg font-bold text-on-surface mb-2">Unable to Launch Examination</h2>
+          <p className="text-sm text-error mb-6 bg-error-container/30 p-3 rounded-lg">{startError}</p>
+          <button 
+            type="button" 
+            className="btn btn-primary bg-indigo-600 hover:bg-indigo-700 w-full font-bold"
+            onClick={onExit}
+          >
+            Return to Student Portal
+          </button>
         </div>
       </div>
     );
@@ -816,6 +838,13 @@ export function CbtExamView({ examId, onComplete, onExit }) {
                 <span className="font-bold text-error">{notAnsweredCount + notVisitedCount}</span>
               </div>
             </div>
+
+            {submitError && (
+              <div className="p-3 bg-error-container text-error rounded-lg text-xs font-semibold flex items-center gap-2">
+                <AlertTriangle size={16} className="shrink-0" />
+                <span>{submitError}</span>
+              </div>
+            )}
 
             <div className="p-3 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-900 flex items-start gap-2">
               <Info size={16} className="shrink-0 text-amber-700 mt-0.5" />

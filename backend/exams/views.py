@@ -660,10 +660,14 @@ class StudentExamViewSet(viewsets.ViewSet):
             
         q_order_ids = [eq.question_id for eq in exam_questions]
 
+        # Derive next attempt number from highest existing attempt
+        last_attempt = ExamAttempt.objects.filter(exam=exam, student=user).order_by('-attempt_number').first()
+        next_attempt_number = (last_attempt.attempt_number + 1) if last_attempt else 1
+
         attempt = ExamAttempt.objects.create(
             exam=exam,
             student=user,
-            attempt_number=completed_count + 1,
+            attempt_number=next_attempt_number,
             started_at=now,
             expires_at=expires,
             status='IN_PROGRESS',

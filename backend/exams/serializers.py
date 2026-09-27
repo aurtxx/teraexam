@@ -79,7 +79,7 @@ class QuestionSerializer(serializers.ModelSerializer):
             'default_marks', 'default_negative_marks', 'created_by', 'created_by_name',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at', 'created_by']
+        read_only_fields = ['id', 'institution', 'created_at', 'updated_at', 'created_by']
 
 
 class StudentLiveQuestionSerializer(serializers.ModelSerializer):
@@ -132,7 +132,7 @@ class ExamListSerializer(serializers.ModelSerializer):
             'show_leaderboard', 'question_count', 'attempt_count', 'batches_info',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'institution', 'created_at', 'updated_at']
 
     def get_question_count(self, obj):
         return obj.exam_questions.count()
@@ -148,6 +148,8 @@ class ExamDetailSerializer(serializers.ModelSerializer):
     sections = ExamSectionSerializer(many=True, read_only=True)
     exam_questions = ExamQuestionSerializer(many=True, read_only=True)
     batches_info = serializers.SerializerMethodField()
+    code = serializers.CharField(required=False, allow_blank=True, default="")
+    status = serializers.CharField(required=False, default="SCHEDULED")
 
     class Meta:
         model = Exam
@@ -159,7 +161,23 @@ class ExamDetailSerializer(serializers.ModelSerializer):
             'status', 'results_published', 'show_leaderboard', 'show_solutions_after_submit',
             'sections', 'exam_questions', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'institution', 'created_at', 'updated_at']
+
+    def validate(self, attrs):
+        import uuid
+        from django.utils import timezone
+        code = attrs.get('code', '').strip()
+        if not code:
+            attrs['code'] = f"EXAM-{timezone.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:4].upper()}"
+        else:
+            attrs['code'] = code.upper()
+
+        if attrs.get('status') == 'PUBLISHED':
+            attrs['status'] = 'SCHEDULED'
+        elif attrs.get('status') not in ['DRAFT', 'SCHEDULED', 'LIVE', 'COMPLETED', 'ARCHIVED']:
+            attrs['status'] = 'SCHEDULED'
+            
+        return attrs
 
     def get_batches_info(self, obj):
         return [{'id': b.id, 'name': b.name, 'code': b.code} for b in obj.batches.all()]
