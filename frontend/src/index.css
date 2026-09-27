@@ -1,29 +1,30 @@
 :root {
+  /* High-Contrast ADHD-Calibrated Color System */
   --bg-app: #f8fafc;
   --bg-card: #ffffff;
   --bg-sidebar: #0f172a;
   --bg-sidebar-hover: #1e293b;
-  --bg-sidebar-active: #2563eb;
-  --border-color: #e2e8f0;
-  --border-focus: #3b82f6;
+  --bg-sidebar-active: #4338ca;
+  --border-color: #cbd5e1;
+  --border-focus: #4338ca;
   
-  --text-main: #0f172a;
-  --text-muted: #64748b;
+  --text-main: #090d16;
+  --text-muted: #475569;
   --text-inverse: #f8fafc;
   
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: #eff6ff;
+  --primary: #4338ca;
+  --primary-hover: #3730a3;
+  --primary-light: #eef2ff;
   
-  --success: #16a34a;
+  --success: #15803d;
   --success-light: #f0fdf4;
-  --warning: #d97706;
+  --warning: #b45309;
   --warning-light: #fffbeb;
-  --danger: #dc2626;
-  --danger-hover: #b91c1c;
+  --danger: #b91c1c;
+  --danger-hover: #991b1b;
   --danger-light: #fef2f2;
-  --purple: #7c3aed;
-  --purple-light: #f5f3ff;
+  --purple: #6d28d9;
+  --purple-light: #faf5ff;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -31,6 +32,12 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* ADHD Visual Focus Anchors & Accessible Keyboard Outlines */
+:focus-visible {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px !important;
 }
 
 * {
