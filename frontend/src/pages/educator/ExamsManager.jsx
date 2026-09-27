@@ -37,6 +37,7 @@ export function ExamsManager({ showToast }) {
 
   // Modals
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [createError, setCreateError] = useState(null);
   const [addQuestionsModalOpen, setAddQuestionsModalOpen] = useState(false);
   const [analyticsModalOpen, setAnalyticsModalOpen] = useState(false);
   const [proctorModalOpen, setProctorModalOpen] = useState(false);
@@ -106,6 +107,7 @@ export function ExamsManager({ showToast }) {
 
   const handleCreateExam = async (e) => {
     e.preventDefault();
+    setCreateError(null);
     try {
       const payload = {
         title: examForm.title,
@@ -125,13 +127,16 @@ export function ExamsManager({ showToast }) {
       const created = await examsApi.createExam(payload);
       showToast?.('Exam scheduled successfully!', 'success');
       setCreateModalOpen(false);
+      setCreateError(null);
       loadExams();
       
       // Prompt to add questions right away
       openAddQuestionsModal(created);
     } catch (err) {
       console.error('Error creating exam:', err);
-      alert('Failed to schedule exam: ' + (err.message || 'Unknown error'));
+      const msg = err.data?.detail || err.message || 'Failed to schedule exam.';
+      setCreateError(typeof msg === 'object' ? JSON.stringify(msg) : msg);
+      showToast?.('Failed to schedule exam: ' + (typeof msg === 'object' ? JSON.stringify(msg) : msg), 'error');
     }
   };
 
@@ -478,6 +483,12 @@ export function ExamsManager({ showToast }) {
           onClose={() => setCreateModalOpen(false)}
         >
           <form onSubmit={handleCreateExam} className="flex flex-col gap-4">
+            {createError && (
+              <div className="p-3 rounded-lg bg-error-container text-error text-xs font-semibold flex items-center gap-2">
+                <AlertCircle size={16} className="shrink-0" />
+                <span>{createError}</span>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="form-label">Exam Title</label>
