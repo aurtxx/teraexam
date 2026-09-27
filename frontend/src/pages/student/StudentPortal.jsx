@@ -13,7 +13,8 @@ import {
   ArrowRight, 
   HelpCircle,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
+  Printer
 } from 'lucide-react';
 import { Badge } from '../../components/Badge';
 
@@ -190,13 +191,26 @@ export function StudentPortal({ onStartExam, onViewScorecard }) {
                           {isCompleted && (
                             <div className="flex flex-col items-end gap-1">
                               {exam.results_published ? (
-                                <button 
-                                  className="btn btn-sm btn-outline text-indigo font-semibold"
-                                  onClick={() => onViewScorecard(exam.latest_attempt_id)}
-                                >
-                                  <Award size={14} className="mr-1 text-amber-500" />
-                                  View Scorecard & Solutions
-                                </button>
+                                <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                                  <button 
+                                    type="button"
+                                    className="btn btn-sm btn-outline text-indigo font-semibold"
+                                    onClick={() => onViewScorecard(exam.latest_attempt_id)}
+                                  >
+                                    <Award size={14} className="mr-1 text-amber-500" />
+                                    Analysis
+                                  </button>
+                                  <a 
+                                    href={studentApi.getPrintableScorecardUrl(exam.latest_attempt_id)}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="btn btn-sm btn-primary bg-indigo-600 hover:bg-indigo-700 font-semibold"
+                                    title="Open Official Print-Ready NTA Scorecard"
+                                  >
+                                    <Printer size={13} className="mr-1" />
+                                    Print Scorecard
+                                  </a>
+                                </div>
                               ) : (
                                 <span className="text-xs text-muted bg-slate-100 px-2 py-1 rounded">
                                   Evaluation in Progress
@@ -261,12 +275,24 @@ export function StudentPortal({ onStartExam, onViewScorecard }) {
                           ) : '-'}
                         </td>
                         <td>
-                          <button 
-                            className="btn btn-xs btn-outline text-indigo"
-                            onClick={() => onViewScorecard(att.id)}
-                          >
-                            Scorecard
-                          </button>
+                          <div className="flex items-center gap-1.5">
+                            <button 
+                              type="button"
+                              className="btn btn-xs btn-outline text-indigo"
+                              onClick={() => onViewScorecard(att.id)}
+                            >
+                              Scorecard
+                            </button>
+                            <a 
+                              href={studentApi.getPrintableScorecardUrl(att.id)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="btn btn-xs btn-outline text-primary font-semibold"
+                              title="Print Official NTA Scorecard"
+                            >
+                              <Printer size={12} />
+                            </a>
+                          </div>
                         </td>
                       </tr>
                     ))}

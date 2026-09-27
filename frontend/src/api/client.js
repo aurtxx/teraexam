@@ -142,6 +142,10 @@ export const examsApi = {
   deleteQuestion: (id) => apiRequest(`/api/questions/${id}/`, { method: 'DELETE' }),
   bulkImportQuestions: (csvText) => apiRequest('/api/questions/bulk_import/', { method: 'POST', body: { csv_text: csvText } }),
 
+  // Subscription & Audit
+  getSubscriptionUsage: () => apiRequest('/api/institutions/subscription_usage/'),
+  getAuditLogs: () => apiRequest('/api/institutions/audit_logs/'),
+
   // Exams
   listExams: (params = {}) => {
     const q = new URLSearchParams();
@@ -161,6 +165,14 @@ export const examsApi = {
     apiRequest(`/api/exams/${examId}/publish_results/`, { method: 'POST', body: { publish } }),
   getExamAnalytics: (examId) => apiRequest(`/api/exams/${examId}/analytics/`),
   recalculateRanks: (examId) => apiRequest(`/api/exams/${examId}/recalculate_ranks/`, { method: 'POST' }),
+  exportResultsCsvUrl: (examId) => `/api/exams/${examId}/export_results_csv/`,
+  getPrintableMeritListUrl: (examId) => `/api/exams/${examId}/printable_merit_list/`,
+  getPrintableScorecardUrl: (examId, attemptId) => `/api/exams/${examId}/student_scorecard/?attempt_id=${attemptId}`,
+
+  // Proctoring & Integrity Overrides
+  getProctoringReport: (examId) => apiRequest(`/api/exams/${examId}/proctoring_report/`),
+  grantReattempt: (examId, payload) => apiRequest(`/api/exams/${examId}/grant_reattempt/`, { method: 'POST', body: payload }),
+  resetStudentAttempt: (examId, payload) => apiRequest(`/api/exams/${examId}/reset_student_attempt/`, { method: 'POST', body: payload }),
 
   // Students Management
   listStudents: () => apiRequest('/api/students/'),
@@ -180,6 +192,8 @@ export const studentApi = {
   submitAttempt: (attemptId) => apiRequest('/api/student-portal/submit_attempt/', { method: 'POST', body: { attempt_id: attemptId } }),
   getScorecard: (attemptId) => apiRequest(`/api/student-portal/scorecard/?attempt_id=${attemptId}`),
   getHistory: () => apiRequest('/api/student-portal/history/'),
+  logTelemetry: (payload) => apiRequest('/api/student-portal/log_telemetry/', { method: 'POST', body: payload }),
+  getPrintableScorecardUrl: (attemptId) => `/api/student-portal/printable_scorecard/?attempt_id=${attemptId}`,
 };
 
 // Legacy System Admin APIs

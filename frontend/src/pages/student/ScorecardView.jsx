@@ -60,15 +60,25 @@ export function ScorecardView({ attemptId, onBack }) {
   return (
     <div className="scorecard-container max-w-4xl mx-auto py-6">
       {/* Top Navigation */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <button className="btn btn-outline" onClick={onBack}>
           <ArrowLeft size={16} className="mr-1.5" />
           Back to Dashboard
         </button>
-        <button className="btn btn-outline text-indigo" onClick={() => window.print()}>
-          <Printer size={16} className="mr-1.5" />
-          Print / Save PDF
-        </button>
+        <div className="flex items-center gap-3">
+          <a 
+            href={studentApi.getPrintableScorecardUrl(attemptId)} 
+            target="_blank" 
+            rel="noreferrer"
+            className="btn btn-primary bg-indigo-600 hover:bg-indigo-700 font-bold"
+          >
+            <Printer size={16} className="mr-1.5" />
+            Official NTA Print Scorecard
+          </a>
+          <button className="btn btn-outline text-indigo" onClick={() => window.print()}>
+            Print View
+          </button>
+        </div>
       </div>
 
       {/* Main Scorecard Banner */}

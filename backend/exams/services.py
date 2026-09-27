@@ -92,6 +92,8 @@ def get_exam_analytics(exam):
     leaderboard = []
     for att in top_attempts:
         leaderboard.append({
+            'attempt_id': att.id,
+            'student_id': att.student.id,
             'rank': att.rank,
             'student_name': att.student.get_full_name() or att.student.username,
             'username': att.student.username,

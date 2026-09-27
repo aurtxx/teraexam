@@ -19,7 +19,12 @@ import {
   Sparkles,
   HelpCircle,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  Shield,
+  ShieldAlert,
+  Printer,
+  RotateCcw,
+  UserCheck
 } from 'lucide-react';
 import { Badge } from '../../components/Badge';
 import { Modal } from '../../components/Modal';
@@ -34,6 +39,16 @@ export function ExamsManager({ showToast }) {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [addQuestionsModalOpen, setAddQuestionsModalOpen] = useState(false);
   const [analyticsModalOpen, setAnalyticsModalOpen] = useState(false);
+  const [proctorModalOpen, setProctorModalOpen] = useState(false);
+  const [proctorLoading, setProctorLoading] = useState(false);
+  const [proctorData, setProctorData] = useState(null);
+  const [overrideModalOpen, setOverrideModalOpen] = useState(false);
+  const [selectedStudentForOverride, setSelectedStudentForOverride] = useState(null);
+  const [overrideForm, setOverrideForm] = useState({
+    reason: 'Technical glitch / disconnection allowance',
+    max_attempts: 2,
+    valid_until: '',
+  });
   
   // Selected Exam for actions
   const [activeExam, setActiveExam] = useState(null);
@@ -210,6 +225,70 @@ export function ExamsManager({ showToast }) {
     }
   };
 
+  const openProctorModal = async (exam) => {
+    setActiveExam(exam);
+    setProctorModalOpen(true);
+    setProctorLoading(true);
+    try {
+      const data = await examsApi.getProctoringReport(exam.id);
+      setProctorData(data);
+    } catch (err) {
+      console.error('Error loading proctoring report:', err);
+      showToast?.('Failed to load proctoring report', 'error');
+    } finally {
+      setProctorLoading(false);
+    }
+  };
+
+  const handleResetAttempt = async (studentId, studentName) => {
+    if (!window.confirm(`Are you sure you want to reset all test attempts for ${studentName}? Their current submission will be removed and they can retake the test.`)) {
+      return;
+    }
+    try {
+      await examsApi.resetStudentAttempt(activeExam.id, {
+        student_id: studentId,
+        reason: 'Educator authorized reset from proctoring console'
+      });
+      showToast?.(`Attempt reset successfully for ${studentName}`, 'success');
+      const updated = await examsApi.getProctoringReport(activeExam.id);
+      setProctorData(updated);
+      loadExams();
+    } catch (err) {
+      console.error('Error resetting attempt:', err);
+      showToast?.('Failed to reset attempt: ' + (err.message || 'Error'), 'error');
+    }
+  };
+
+  const openOverrideDialog = (student) => {
+    setSelectedStudentForOverride(student);
+    setOverrideForm({
+      reason: 'Technical glitch / disconnection allowance',
+      max_attempts: 2,
+      valid_until: new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 16),
+    });
+    setOverrideModalOpen(true);
+  };
+
+  const handleSaveOverride = async (e) => {
+    e.preventDefault();
+    if (!activeExam || !selectedStudentForOverride) return;
+    try {
+      await examsApi.grantReattempt(activeExam.id, {
+        student_id: selectedStudentForOverride.student_id,
+        reason: overrideForm.reason,
+        max_attempts: parseInt(overrideForm.max_attempts),
+        valid_until: overrideForm.valid_until ? new Date(overrideForm.valid_until).toISOString() : null,
+      });
+      showToast?.(`Re-attempt override granted to ${selectedStudentForOverride.student_name}!`, 'success');
+      setOverrideModalOpen(false);
+      const updated = await examsApi.getProctoringReport(activeExam.id);
+      setProctorData(updated);
+    } catch (err) {
+      console.error('Error granting override:', err);
+      showToast?.('Failed to grant override: ' + (err.message || 'Error'), 'error');
+    }
+  };
+
   return (
     <div className="exams-manager-page">
       {/* Header */}
@@ -313,8 +392,9 @@ export function ExamsManager({ showToast }) {
 
                 {/* Operations & Analytics */}
                 <div className="flex flex-col gap-2 shrink-0">
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2 flex-wrap justify-end">
                     <button 
+                      type="button"
                       className="btn btn-sm btn-outline text-indigo"
                       onClick={() => openAddQuestionsModal(exam)}
                       title="Manage exam questions"
@@ -324,6 +404,17 @@ export function ExamsManager({ showToast }) {
                     </button>
 
                     <button 
+                      type="button"
+                      className="btn btn-sm btn-outline text-secondary"
+                      onClick={() => openProctorModal(exam)}
+                      title="View live proctoring telemetry & integrity events"
+                    >
+                      <Shield size={14} className="mr-1 text-secondary" />
+                      Proctoring
+                    </button>
+
+                    <button 
+                      type="button"
                       className="btn btn-sm btn-primary"
                       onClick={() => openAnalyticsModal(exam)}
                     >
@@ -332,8 +423,9 @@ export function ExamsManager({ showToast }) {
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 mt-1">
+                  <div className="flex items-center justify-end gap-2 mt-1 flex-wrap">
                     <button 
+                      type="button"
                       className={`btn btn-xs ${exam.results_published ? 'btn-outline text-purple-700' : 'btn-outline text-muted'}`}
                       onClick={() => handleTogglePublish(exam)}
                       title="Toggle student scorecard publication"
@@ -342,17 +434,29 @@ export function ExamsManager({ showToast }) {
                     </button>
 
                     <a 
-                      href={`/api/exams/${exam.id}/export_results_csv/`} 
+                      href={examsApi.getPrintableMeritListUrl(exam.id)} 
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-xs btn-outline text-primary font-semibold"
+                      title="Open Official Print-Ready Master Merit List"
+                    >
+                      <Printer size={12} className="mr-1" />
+                      Print Merit List
+                    </a>
+
+                    <a 
+                      href={examsApi.exportResultsCsvUrl(exam.id)} 
                       download 
                       className="btn btn-xs btn-outline text-muted hover:text-main"
                       title="Export Merit List to CSV"
                     >
                       <Download size={12} className="mr-1" />
-                      Merit List
+                      CSV
                     </a>
 
                     <button 
-                      className="btn-icon text-muted hover:text-danger"
+                      type="button"
+                      className="btn-icon text-muted hover:text-danger ml-1"
                       onClick={() => handleDeleteExam(exam.id)}
                       title="Delete Exam"
                     >
@@ -689,6 +793,7 @@ export function ExamsManager({ showToast }) {
                           <th>Percentile</th>
                           <th>Accuracy</th>
                           <th>Time</th>
+                          <th className="text-right">Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -711,6 +816,20 @@ export function ExamsManager({ showToast }) {
                             <td className="font-bold text-emerald-700">{lb.percentile}%</td>
                             <td className="text-muted">{lb.accuracy}%</td>
                             <td className="font-mono text-muted">{Math.floor(lb.time_spent_seconds / 60)}m {lb.time_spent_seconds % 60}s</td>
+                            <td className="text-right">
+                              {lb.attempt_id && (
+                                <a 
+                                  href={examsApi.getPrintableScorecardUrl(activeExam.id, lb.attempt_id)} 
+                                  target="_blank" 
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 text-primary hover:underline font-semibold"
+                                  title="Print Official NTA Scorecard"
+                                >
+                                  <Printer size={12} />
+                                  <span>Scorecard</span>
+                                </a>
+                              )}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -767,15 +886,26 @@ export function ExamsManager({ showToast }) {
                 </div>
               )}
 
-              <div className="flex justify-between items-center mt-2 border-t pt-3">
-                <a 
-                  href={`/api/exams/${activeExam.id}/export_results_csv/`}
-                  download
-                  className="btn btn-outline btn-sm text-indigo"
-                >
-                  <Download size={14} className="mr-1" />
-                  Download Complete Merit List CSV
-                </a>
+              <div className="flex justify-between items-center mt-2 border-t pt-3 flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <a 
+                    href={examsApi.getPrintableMeritListUrl(activeExam.id)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-outline btn-sm text-primary font-semibold"
+                  >
+                    <Printer size={14} className="mr-1" />
+                    Print Master Merit List
+                  </a>
+                  <a 
+                    href={examsApi.exportResultsCsvUrl(activeExam.id)}
+                    download
+                    className="btn btn-outline btn-sm text-muted"
+                  >
+                    <Download size={14} className="mr-1" />
+                    CSV Export
+                  </a>
+                </div>
                 <button 
                   type="button" 
                   className="btn btn-primary btn-sm"
@@ -788,6 +918,202 @@ export function ExamsManager({ showToast }) {
           ) : null}
         </Modal>
       )}
+
+      {/* PROCTORING & INTEGRITY AUDIT MODAL */}
+      {proctorModalOpen && activeExam && (
+        <Modal 
+          isOpen={proctorModalOpen} 
+          title={`Proctoring & Integrity Stream: ${activeExam.title}`} 
+          onClose={() => setProctorModalOpen(false)}
+        >
+          {proctorLoading ? (
+            <div className="text-center py-12">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+              <p className="text-xs text-muted">Retrieving candidate proctoring events & security logs...</p>
+            </div>
+          ) : proctorData ? (
+            <div className="flex flex-col gap-5 text-on-surface">
+              {/* Telemetry Summary Cards */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-3 bg-surface-container-low border border-outline-variant rounded-xl text-center">
+                  <span className="text-xs text-on-surface-variant font-medium block">Candidates Monitored</span>
+                  <span className="text-xl font-bold text-on-surface">{proctorData.total_candidates}</span>
+                </div>
+                <div className="p-3 bg-error-container/60 border border-error/30 rounded-xl text-center">
+                  <span className="text-xs text-error font-medium block">Flagged Integrity Risks</span>
+                  <span className="text-xl font-bold text-error">{proctorData.flagged_candidates_count}</span>
+                </div>
+                <div className="p-3 bg-amber-50 border border-amber-300 rounded-xl text-center">
+                  <span className="text-xs text-amber-900 font-medium block">Total Security Warnings</span>
+                  <span className="text-xl font-bold text-amber-800">{proctorData.total_warnings_issued}</span>
+                </div>
+              </div>
+
+              {/* Student Telemetry Table */}
+              <div>
+                <h4 className="font-bold text-sm text-on-surface mb-2 flex items-center gap-1.5">
+                  <ShieldAlert size={16} className="text-primary" />
+                  Candidate Event Breakdown & Audit Controls
+                </h4>
+
+                {proctorData.attempts && proctorData.attempts.length > 0 ? (
+                  <div className="border border-outline-variant rounded-xl overflow-hidden max-h-72 overflow-y-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-surface-container text-on-surface-variant font-bold uppercase tracking-wider">
+                        <tr className="border-b border-outline-variant">
+                          <th className="py-2.5 px-3">Candidate</th>
+                          <th className="py-2.5 px-2 text-center">Tab Switches</th>
+                          <th className="py-2.5 px-2 text-center">Fullscreen Exits</th>
+                          <th className="py-2.5 px-2 text-center">Copy/Paste</th>
+                          <th className="py-2.5 px-2 text-center">Integrity Status</th>
+                          <th className="py-2.5 px-3 text-right">Overrides</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-outline-variant bg-surface-container-lowest">
+                        {proctorData.attempts.map((att) => (
+                          <tr key={att.attempt_id} className="hover:bg-surface-container-low transition-colors">
+                            <td className="py-2.5 px-3">
+                              <div className="font-semibold text-on-surface">{att.student_name}</div>
+                              <div className="text-[11px] text-on-surface-variant font-mono">Roll: {att.roll_number || att.username}</div>
+                            </td>
+                            <td className="py-2.5 px-2 text-center">
+                              <span className={`font-mono font-bold ${att.tab_switch_count >= 3 ? 'text-error' : 'text-on-surface'}`}>
+                                {att.tab_switch_count}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-2 text-center font-mono">
+                              {att.fullscreen_exit_count}
+                            </td>
+                            <td className="py-2.5 px-2 text-center">
+                              <span className={`font-mono font-bold ${att.copy_paste_count > 0 ? 'text-amber-700' : 'text-on-surface-variant'}`}>
+                                {att.copy_paste_count}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-2 text-center">
+                              {att.is_flagged ? (
+                                <span className="px-2 py-0.5 rounded-full bg-error-container text-error font-bold text-[10px] uppercase">
+                                  HIGH RISK
+                                </span>
+                              ) : (
+                                <span className="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-bold text-[10px] uppercase">
+                                  NORMAL
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-2.5 px-3 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button 
+                                  type="button"
+                                  className="btn btn-xs btn-outline text-primary font-semibold"
+                                  onClick={() => openOverrideDialog(att)}
+                                  title="Grant re-attempt override without modifying global rules"
+                                >
+                                  <UserCheck size={12} className="mr-1" />
+                                  Re-Attempt
+                                </button>
+                                <button 
+                                  type="button"
+                                  className="btn btn-xs btn-outline text-error hover:bg-error hover:text-white"
+                                  onClick={() => handleResetAttempt(att.student_id, att.student_name)}
+                                  title="Wipe submitted state and allow fresh attempt"
+                                >
+                                  <RotateCcw size={12} className="mr-1" />
+                                  Reset
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted italic">No proctoring attempts logged for this examination yet.</p>
+                )}
+              </div>
+
+              <div className="flex justify-end pt-2 border-t border-outline-variant">
+                <button 
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  onClick={() => setProctorModalOpen(false)}
+                >
+                  Close Console
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </Modal>
+      )}
+
+      {/* GRANT RE-ATTEMPT OVERRIDE MODAL */}
+      {overrideModalOpen && selectedStudentForOverride && (
+        <Modal 
+          isOpen={overrideModalOpen} 
+          title={`Grant Re-Attempt Override: ${selectedStudentForOverride.student_name}`} 
+          onClose={() => setOverrideModalOpen(false)}
+        >
+          <form onSubmit={handleSaveOverride} className="flex flex-col gap-4 text-on-surface">
+            <p className="text-xs text-on-surface-variant">
+              This authorizes a single-student override for <strong>{selectedStudentForOverride.student_name}</strong> (Roll: {selectedStudentForOverride.roll_number || selectedStudentForOverride.username}) on <strong>{activeExam.title}</strong> without changing rules for other candidates in the batch.
+            </p>
+
+            <div>
+              <label className="form-label text-xs font-bold">Reason for Retake Authorization</label>
+              <input 
+                type="text"
+                className="form-input text-xs"
+                value={overrideForm.reason}
+                onChange={(e) => setOverrideForm({ ...overrideForm, reason: e.target.value })}
+                placeholder="e.g. Wi-Fi failure during submission window"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="form-label text-xs font-bold">Allowed Max Attempts</label>
+                <input 
+                  type="number"
+                  min="1"
+                  max="5"
+                  className="form-input text-xs font-mono font-bold"
+                  value={overrideForm.max_attempts}
+                  onChange={(e) => setOverrideForm({ ...overrideForm, max_attempts: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="form-label text-xs font-bold">Valid Until (Optional)</label>
+                <input 
+                  type="datetime-local"
+                  className="form-input text-xs"
+                  value={overrideForm.valid_until}
+                  onChange={(e) => setOverrideForm({ ...overrideForm, valid_until: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-outline-variant">
+              <button 
+                type="button"
+                className="btn btn-outline btn-sm"
+                onClick={() => setOverrideModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit"
+                className="btn btn-primary btn-sm font-bold"
+              >
+                Grant & Save Override
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
     </div>
   );
 }
+

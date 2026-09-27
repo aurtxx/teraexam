@@ -15,7 +15,10 @@ import {
   GraduationCap, 
   User, 
   ShieldAlert,
-  Loader2
+  Loader2,
+  Maximize2,
+  Minimize2,
+  Info
 } from 'lucide-react';
 import { Badge } from '../../components/Badge';
 import { Modal } from '../../components/Modal';
@@ -29,17 +32,124 @@ export function CbtExamView({ examId, onComplete, onExit }) {
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
   const [secondsRemaining, setSecondsRemaining] = useState(0);
   const [selectedSubject, setSelectedSubject] = useState('ALL');
+  const [tabSwitchCount, setTabSwitchCount] = useState(0);
+  const [proctorWarning, setProctorWarning] = useState(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Answers Map: { [question_id]: { selected_options: [], numerical_value: '', is_marked_for_review: false, status: '' } }
+  // Answers Map: { [question_id]: { selected_options: [], numerical_value: '', text_value: '', is_marked_for_review: false, status: '' } }
   const [answers, setAnswers] = useState({});
   const timerRef = useRef(null);
+  const warningTimeoutRef = useRef(null);
 
   useEffect(() => {
     startOrResumeExam();
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
     };
   }, [examId]);
+
+  const showSecurityNotice = (message) => {
+    setProctorWarning(message);
+    if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
+    warningTimeoutRef.current = setTimeout(() => {
+      setProctorWarning(null);
+    }, 5000);
+  };
+
+  // Setup Proctoring Telemetry Listeners
+  useEffect(() => {
+    if (!examData?.attempt_id) return;
+    const attemptId = examData.attempt_id;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setTabSwitchCount(prev => {
+          const next = prev + 1;
+          showSecurityNotice(`Security Notice: Exam window focus lost. Tab switch #${next} has been logged.`);
+          return next;
+        });
+        studentApi.logTelemetry({
+          attempt_id: attemptId,
+          event_type: 'TAB_SWITCH',
+          details: { tab_hidden: true, timestamp: new Date().toISOString() }
+        }).catch(err => console.warn('Telemetry error:', err));
+      }
+    };
+
+    const handleWindowBlur = () => {
+      studentApi.logTelemetry({
+        attempt_id: attemptId,
+        event_type: 'WINDOW_BLUR',
+        details: { blurred: true }
+      }).catch(err => console.warn('Telemetry error:', err));
+    };
+
+    const handleCopyPaste = (e) => {
+      e.preventDefault();
+      showSecurityNotice(`Security Notice: Copying and pasting are restricted during the examination.`);
+      studentApi.logTelemetry({
+        attempt_id: attemptId,
+        event_type: 'COPY_PASTE_ATTEMPT',
+        details: { action: e.type }
+      }).catch(err => console.warn('Telemetry error:', err));
+    };
+
+    const handleKeyDown = (e) => {
+      // Trap F12, Ctrl+Shift+I/J/C, Ctrl+U
+      if (
+        e.key === 'F12' || 
+        (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) ||
+        (e.ctrlKey && e.key.toUpperCase() === 'U')
+      ) {
+        e.preventDefault();
+        showSecurityNotice('Security Notice: Developer tools and source inspection are disabled.');
+        studentApi.logTelemetry({
+          attempt_id: attemptId,
+          event_type: 'DEVTOOLS_ATTEMPT',
+          details: { key_combination: e.key }
+        }).catch(err => console.warn('Telemetry error:', err));
+      }
+    };
+
+    const handleFullscreenChange = () => {
+      const active = Boolean(document.fullscreenElement);
+      setIsFullscreen(active);
+      if (!active) {
+        studentApi.logTelemetry({
+          attempt_id: attemptId,
+          event_type: 'FULLSCREEN_EXIT',
+          details: { exit_time: new Date().toISOString() }
+        }).catch(err => console.warn('Telemetry error:', err));
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleWindowBlur);
+    document.addEventListener('copy', handleCopyPaste);
+    document.addEventListener('cut', handleCopyPaste);
+    document.addEventListener('paste', handleCopyPaste);
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      document.removeEventListener('copy', handleCopyPaste);
+      document.removeEventListener('cut', handleCopyPaste);
+      document.removeEventListener('paste', handleCopyPaste);
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [examData?.attempt_id]);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.().catch(() => {});
+    }
+  };
 
   const startOrResumeExam = async () => {
     try {
@@ -61,7 +171,6 @@ export function CbtExamView({ examId, onComplete, onExit }) {
       });
       setAnswers(initialAnswers);
 
-      // Start countdown
       startTimer(res.seconds_remaining);
     } catch (err) {
       console.error('Failed to start exam:', err);
@@ -89,7 +198,7 @@ export function CbtExamView({ examId, onComplete, onExit }) {
   };
 
   const handleAutoSubmit = async () => {
-    alert('Time limit reached! Your examination has been automatically submitted.');
+    alert('Examination time limit has expired. Responses are now being finalized and submitted.');
     await executeSubmission();
   };
 
@@ -116,10 +225,9 @@ export function CbtExamView({ examId, onComplete, onExit }) {
     const qid = currentQ.question_id;
 
     setAnswers(prev => {
-      const existing = prev[qid] || { selected_options: [], numerical_value: '', is_marked_for_review: false, status: 'NOT_VISITED' };
+      const existing = prev[qid] || { selected_options: [], numerical_value: '', text_value: '', is_marked_for_review: false, status: 'NOT_VISITED' };
       const updated = typeof updater === 'function' ? updater(existing) : { ...existing, ...updater };
       
-      // Determine CBT status
       const hasVal = Boolean(
         (updated.selected_options && updated.selected_options.length > 0) ||
         (updated.numerical_value !== '' && updated.numerical_value !== null && updated.numerical_value !== undefined) ||
@@ -136,7 +244,6 @@ export function CbtExamView({ examId, onComplete, onExit }) {
         updated.status = 'VISITED_UNANSWERED';
       }
 
-      // Auto-save to backend
       saveCurrentAnswerToBackend(qid, updated);
       return { ...prev, [qid]: updated };
     });
@@ -177,7 +284,6 @@ export function CbtExamView({ examId, onComplete, onExit }) {
   const handleSaveAndNext = () => {
     const currentQ = questions[currentIndex];
     const currAns = answers[currentQ?.question_id];
-    // If user hasn't selected anything, mark as visited unanswered
     if (!currAns || (currAns.selected_options.length === 0 && !currAns.numerical_value && !currAns.text_value)) {
       updateCurrentQuestionAnswer({ is_marked_for_review: false });
     }
@@ -203,11 +309,11 @@ export function CbtExamView({ examId, onComplete, onExit }) {
 
   if (loading) {
     return (
-      <div className="cbt-fullscreen-loader flex items-center justify-center min-h-screen bg-slate-900 text-white">
-        <div className="text-center">
-          <Loader2 size={48} className="animate-spin text-emerald-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-1">Launching CBT Testing Environment...</h2>
-          <p className="text-sm text-slate-400">Loading questions, proctoring security & timers</p>
+      <div className="flex items-center justify-center min-h-screen bg-surface text-on-surface">
+        <div className="text-center p-8 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant">
+          <Loader2 size={44} className="animate-spin text-primary mx-auto mb-3" />
+          <h2 className="font-headline-sm text-headline-sm text-on-surface mb-1">Connecting to Secure CBT Environment...</h2>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">Calibrating question sheets, proctoring stream & timer channels</p>
         </div>
       </div>
     );
@@ -217,8 +323,8 @@ export function CbtExamView({ examId, onComplete, onExit }) {
   const currentQ = questions[currentIndex] || null;
   const currentAns = currentQ ? (answers[currentQ.question_id] || { selected_options: [], numerical_value: '', status: 'NOT_VISITED' }) : null;
 
-  // Subjects in exam
-  const subjectList = Array.from(new Set(questions.map(q => q.subject_name)));
+  // Unique Subjects in exam
+  const subjectList = Array.from(new Set(questions.map(q => q.subject_name).filter(Boolean)));
 
   // Format Timer HH:MM:SS
   const formatTime = (secs) => {
@@ -228,7 +334,7 @@ export function CbtExamView({ examId, onComplete, onExit }) {
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  // State Counts for Question Palette
+  // State Counts for Question Palette (NTA 5-state standard)
   let answeredCount = 0;
   let notAnsweredCount = 0;
   let notVisitedCount = 0;
@@ -244,307 +350,400 @@ export function CbtExamView({ examId, onComplete, onExit }) {
     else notVisitedCount++;
   });
 
+  // Filter questions by section if selected
+  const displayedQuestionIndices = questions
+    .map((q, idx) => ({ q, idx }))
+    .filter(({ q }) => selectedSubject === 'ALL' || q.subject_name === selectedSubject);
+
   return (
-    <div className="cbt-exam-container min-h-screen flex flex-col bg-slate-100 text-slate-900">
-      {/* CBT Top Examination Bar */}
-      <header className="cbt-top-bar bg-slate-900 text-white px-6 py-3 flex items-center justify-between shadow-md">
-        <div className="flex items-center gap-4">
-          <div className="bg-emerald-500 w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg text-slate-950 shadow-inner">
-            {institution?.name?.charAt(0) || 'A'}
+    <div className="cbt-exam-container min-h-screen flex flex-col bg-surface text-on-surface font-body-md select-none">
+      {/* Top System Examination Header */}
+      <header className="w-full bg-surface-container-lowest px-6 py-3 flex flex-wrap items-center justify-between gap-4 border-b border-outline-variant shadow-sm z-30">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline-md shadow-sm flex-shrink-0">
+            <span className="material-symbols-outlined text-[24px]">school</span>
           </div>
-          <div>
-            <h1 className="text-base font-bold leading-tight">{examData?.exam_title}</h1>
-            <div className="text-xs text-slate-400 flex items-center gap-2">
-              <span className="font-mono bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">{examData?.exam_code}</span>
-              <span>•</span>
-              <span>{institution?.name || 'Apex Academy'}</span>
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate">
+                {institution?.name || 'TeraExam Examination Authority'}
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider font-semibold">
+                CBT Secure Live
+              </span>
             </div>
+            <p className="font-body-sm text-body-sm text-on-surface-variant truncate">
+              {examData?.exam_title} — Code: <span className="font-code-formula">{examData?.exam_code}</span>
+            </p>
           </div>
         </div>
 
-        {/* Candidate Profile & Countdown Timer */}
-        <div className="flex items-center gap-6">
-          <div className="candidate-info hidden md:flex items-center gap-3 border-r border-slate-700 pr-6">
-            <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-emerald-400 font-bold text-sm">
-              <User size={18} />
+        {/* Right HUD: Timer + Telemetry + Fullscreen + Candidate Profile */}
+        <div className="flex items-center gap-4 ml-auto flex-wrap">
+          {/* Proctoring Warning Badge (ADHD-safe alert) */}
+          {tabSwitchCount > 0 && (
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 text-xs font-semibold">
+              <ShieldAlert size={14} className="text-amber-600" />
+              <span>Switches: {tabSwitchCount}</span>
             </div>
-            <div className="text-right">
-              <div className="text-xs font-semibold text-white">{user?.full_name || user?.username}</div>
-              <div className="text-2xs text-slate-400 font-mono">Roll: {user?.roll_number || 'APEX-001'}</div>
-            </div>
-          </div>
+          )}
 
-          {/* Strict Countdown Timer */}
-          <div className={`cbt-timer flex items-center gap-2 px-4 py-2 rounded-lg font-mono font-bold text-lg shadow-inner ${
-            secondsRemaining < 300 ? 'bg-red-950 text-red-400 border border-red-800 animate-pulse' :
-            secondsRemaining < 600 ? 'bg-amber-950 text-amber-300 border border-amber-800' :
-            'bg-slate-800 text-emerald-400 border border-slate-700'
+          {/* Live Countdown Timer (JetBrains Mono with color shifts) */}
+          <div className={`flex items-center gap-3 px-4 py-2 rounded-xl border shadow-sm transition-colors ${
+            secondsRemaining < 300 
+              ? 'bg-error-container/70 border-error text-error animate-pulse' 
+              : secondsRemaining < 900 
+              ? 'bg-amber-50 border-amber-300 text-amber-900' 
+              : 'bg-surface-container border-outline-variant text-on-surface'
           }`}>
-            <Clock size={20} />
-            <span>{formatTime(secondsRemaining)}</span>
+            <Clock size={18} className={secondsRemaining < 300 ? 'text-error' : 'text-primary'} />
+            <div className="flex flex-col leading-none">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-on-surface-variant">Time Left</span>
+              <span className="font-timer-display text-lg font-bold tracking-wider">{formatTime(secondsRemaining)}</span>
+            </div>
           </div>
 
+          {/* Fullscreen Toggle */}
           <button 
-            className="btn btn-sm btn-primary bg-emerald-600 hover:bg-emerald-700 border-none font-bold"
-            onClick={() => setSubmitModalOpen(true)}
+            type="button"
+            className="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors"
+            title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+            onClick={toggleFullscreen}
           >
-            Submit Exam
+            {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
           </button>
+
+          {/* Candidate Meta */}
+          <div className="flex items-center gap-3 pl-2 border-l border-outline-variant">
+            <div className="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
+              {user?.full_name?.charAt(0) || user?.username?.charAt(0) || 'S'}
+            </div>
+            <div className="flex flex-col">
+              <span className="font-label-md text-label-md text-on-surface font-semibold truncate max-w-[130px]">
+                {user?.full_name || user?.username || 'Candidate'}
+              </span>
+              <span className="font-code-formula text-xs text-on-surface-variant">
+                Roll: {user?.roll_number || 'STU-LIVE'}
+              </span>
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* CBT Section Bar */}
-      <div className="cbt-sections-bar bg-white border-b px-6 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mr-1">Sections:</span>
+      {/* Real-time Proctor Notice Banner (Non-modal toast) */}
+      {proctorWarning && (
+        <div className="bg-amber-500 text-white px-6 py-2 text-xs font-semibold flex items-center justify-between shadow-sm animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <ShieldAlert size={16} />
+            <span>{proctorWarning}</span>
+          </div>
           <button 
-            className={`btn btn-xs ${selectedSubject === 'ALL' ? 'btn-primary' : 'btn-outline text-slate-700'}`}
+            type="button" 
+            className="text-white hover:underline text-xs"
+            onClick={() => setProctorWarning(null)}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {/* Subject & Sub-section Navigation Strip */}
+      <nav className="w-full bg-surface-container px-6 py-2 flex flex-wrap items-center justify-between gap-3 border-b border-outline-variant">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mr-1">Section:</span>
+          <button 
+            type="button"
+            className={`px-3 py-1.5 rounded-lg font-label-md text-label-md transition-all flex items-center gap-1.5 ${
+              selectedSubject === 'ALL'
+                ? 'bg-primary text-on-primary shadow-sm font-semibold'
+                : 'bg-surface-container-lowest hover:bg-surface-container-high text-on-surface-variant'
+            }`}
             onClick={() => setSelectedSubject('ALL')}
           >
-            All Questions ({questions.length})
+            <span>All Sections</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-black/10 font-code-formula text-xs">{questions.length}</span>
           </button>
-          {subjectList.map(sub => (
-            <button 
-              key={sub}
-              className={`btn btn-xs ${selectedSubject === sub ? 'btn-primary' : 'btn-outline text-slate-700'}`}
-              onClick={() => setSelectedSubject(sub)}
-            >
-              {sub} ({questions.filter(q => q.subject_name === sub).length})
-            </button>
-          ))}
+
+          {subjectList.map(sub => {
+            const count = questions.filter(q => q.subject_name === sub).length;
+            const isSelected = selectedSubject === sub;
+            return (
+              <button 
+                key={sub}
+                type="button"
+                className={`px-3 py-1.5 rounded-lg font-label-md text-label-md transition-all flex items-center gap-1.5 ${
+                  isSelected
+                    ? 'bg-primary text-on-primary shadow-sm font-semibold'
+                    : 'bg-surface-container-lowest hover:bg-surface-container-high text-on-surface-variant'
+                }`}
+                onClick={() => setSelectedSubject(sub)}
+              >
+                <span>{sub}</span>
+                <span className="px-1.5 py-0.2 rounded-full bg-black/10 font-code-formula text-xs">{count}</span>
+              </button>
+            );
+          })}
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-slate-600">
-          <span className="font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-            Correct: +{currentQ?.marks ?? 4.0}
-          </span>
-          <span className="font-semibold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200">
-            Negative: -{currentQ?.negative_marks ?? 1.0}
-          </span>
+        {/* Scoring Matrix Tag for Current Question */}
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-1 text-secondary font-label-md text-label-md bg-secondary-container/40 px-2.5 py-1 rounded-lg">
+            <span className="material-symbols-outlined text-[16px] font-bold">add_circle</span>
+            <span>+{currentQ?.marks ?? 4.0} Correct</span>
+          </div>
+          <div className="flex items-center gap-1 text-error font-label-md text-label-md bg-error-container/60 px-2.5 py-1 rounded-lg">
+            <span className="material-symbols-outlined text-[16px] font-bold">remove_circle</span>
+            <span>-{currentQ?.negative_marks ?? 1.0} Incorrect</span>
+          </div>
         </div>
-      </div>
+      </nav>
 
-      {/* Main Examination Workspace */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Area: Question Viewer & Answer Selector */}
-        <div className="flex-1 flex flex-col justify-between p-6 overflow-y-auto">
-          {currentQ ? (
-            <div className="question-content-box max-w-4xl mx-auto w-full">
-              {/* Question Header */}
-              <div className="flex items-center justify-between border-b pb-3 mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-base font-bold text-indigo bg-indigo-50 px-3 py-1 rounded">
-                    Question {currentIndex + 1}
+      {/* Main Workspace Split: Left Question View (72%) vs Right Palette (28%) */}
+      <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 lg:p-6 bg-surface overflow-y-auto">
+        {/* Left Pane: Problem Presentation & Answering Sheet */}
+        <div className="lg:col-span-8 flex flex-col gap-4">
+          <div className="w-full bg-surface-container-lowest rounded-xl p-6 lg:p-8 shadow-sm border border-outline-variant flex flex-col gap-6">
+            {/* Question Meta Header */}
+            <div className="flex flex-wrap items-center justify-between pb-4 border-b border-outline-variant gap-3">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="px-3 py-1 rounded-lg bg-primary text-on-primary font-headline-sm text-headline-sm font-bold shadow-sm">
+                  Question {currentIndex + 1}
+                </span>
+                <span className="px-2.5 py-0.5 rounded-md bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold">
+                  {currentQ?.question_type?.replace('_', ' ') || 'Single Choice Correct'}
+                </span>
+                {currentQ?.subject_name && (
+                  <span className="px-2.5 py-0.5 rounded-md bg-surface-container-highest text-on-surface font-label-md text-label-md">
+                    {currentQ.subject_name}
                   </span>
-                  <Badge variant="purple" size="xs">{currentQ.subject_name}</Badge>
-                  <Badge variant="info" size="xs">{currentQ.question_type.replace('_', ' ')}</Badge>
-                  <Badge variant={currentQ.difficulty === 'HARD' ? 'danger' : 'warning'} size="xs">
-                    {currentQ.difficulty}
-                  </Badge>
-                </div>
-                <span className="text-xs text-muted font-mono">ID: #{currentQ.question_id}</span>
+                )}
               </div>
+              <span className="text-xs text-on-surface-variant font-code-formula">
+                Item ID: #{currentQ?.question_id}
+              </span>
+            </div>
 
-              {/* Question Text Statement */}
-              <div className="question-statement text-slate-900 text-lg font-medium leading-relaxed mb-6 whitespace-pre-wrap">
-                {currentQ.question_text}
-              </div>
+            {/* Problem Formulation */}
+            <div className="flex flex-col gap-4 text-on-surface">
+              <p className="font-body-lg text-body-lg leading-relaxed whitespace-pre-wrap">
+                {currentQ?.question_text}
+              </p>
+            </div>
 
-              {/* Options Selector */}
-              {['MCQ_SINGLE', 'MCQ_MULTI'].includes(currentQ.question_type) && currentQ.options && (
-                <div className="options-container flex flex-col gap-3">
-                  {currentQ.options.map(opt => {
-                    const isSelected = (currentAns?.selected_options || []).includes(opt.id);
-                    return (
-                      <div 
-                        key={opt.id}
-                        className={`cbt-option-item p-4 rounded-xl border-2 transition cursor-pointer flex items-center gap-4 ${
-                          isSelected ? 'border-indigo-600 bg-indigo-50/50 shadow-sm' : 'border-slate-200 bg-white hover:border-slate-300'
-                        }`}
-                        onClick={() => handleSelectOption(opt.id)}
-                      >
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition ${
-                          isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700'
+            {/* Answer Options Formulation */}
+            {['MCQ_SINGLE', 'MCQ_MULTI'].includes(currentQ?.question_type) && currentQ?.options && (
+              <div className="flex flex-col gap-3 pt-2">
+                <span className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider font-semibold">
+                  {currentQ.question_type === 'MCQ_MULTI' ? 'Choose All Applicable Options:' : 'Choose the Correct Option:'}
+                </span>
+                {currentQ.options.map(opt => {
+                  const isSelected = (currentAns?.selected_options || []).includes(opt.id);
+                  return (
+                    <label 
+                      key={opt.id}
+                      className={`group relative flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all border ${
+                        isSelected 
+                          ? 'bg-primary-fixed/20 border-primary shadow-sm' 
+                          : 'bg-surface-container-low hover:bg-surface-container border-outline-variant text-on-surface'
+                      }`}
+                      onClick={() => handleSelectOption(opt.id)}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={`w-8 h-8 rounded-full font-headline-sm text-headline-sm flex items-center justify-center flex-shrink-0 transition-colors shadow-sm ${
+                          isSelected 
+                            ? 'bg-primary text-on-primary' 
+                            : 'bg-surface-container-highest text-on-surface group-hover:bg-primary-container group-hover:text-on-primary'
                         }`}>
                           {opt.id}
                         </div>
-                        <div className="text-base text-slate-800 flex-1">{opt.text}</div>
-                        {isSelected && <Check size={20} className="text-indigo-600" />}
+                        <div className="font-body-md text-body-md text-on-surface leading-normal">
+                          {opt.text}
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
+                      <div className="flex items-center gap-2">
+                        {isSelected ? (
+                          <span className="material-symbols-outlined text-primary text-[22px]">check_circle</span>
+                        ) : (
+                          <div className="w-5 h-5 rounded-full border-2 border-outline-variant group-hover:border-outline"></div>
+                        )}
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
 
-              {/* Numerical Response Keypad */}
-              {currentQ.question_type === 'NUMERICAL' && (
-                <div className="p-6 bg-white rounded-xl border-2 border-indigo-200 max-w-md">
-                  <label className="form-label text-sm font-bold text-indigo-900 mb-2 block">
-                    Enter Numerical Value Answer:
-                  </label>
-                  <input 
-                    type="number"
-                    step="any"
-                    className="form-input text-lg font-mono font-bold p-3"
-                    placeholder="Enter decimal or integer value..."
-                    value={currentAns?.numerical_value || ''}
-                    onChange={(e) => updateCurrentQuestionAnswer({ numerical_value: e.target.value })}
-                  />
-                  <p className="text-xs text-muted mt-2">
-                    Enter your calculated decimal answer (e.g. 15.91 or -2.5).
-                  </p>
-                </div>
-              )}
+            {/* Numerical Answer Type Input */}
+            {currentQ?.question_type === 'NUMERICAL' && (
+              <div className="p-6 bg-surface-container-low rounded-xl border border-primary/20 max-w-lg">
+                <label className="font-label-md text-label-md font-bold text-on-surface mb-2 block uppercase tracking-wider">
+                  Numerical Value Answer:
+                </label>
+                <input 
+                  type="number"
+                  step="any"
+                  className="w-full px-4 py-3 rounded-lg bg-surface-container-lowest border-2 border-outline focus:border-primary focus:outline-none font-code-formula text-xl text-on-surface shadow-inner"
+                  placeholder="Enter decimal or integer..."
+                  value={currentAns?.numerical_value || ''}
+                  onChange={(e) => updateCurrentQuestionAnswer({ numerical_value: e.target.value })}
+                />
+                <p className="font-body-sm text-body-sm text-on-surface-variant mt-2">
+                  Enter precise numerical result (e.g. <span className="font-code-formula">14.50</span> or <span className="font-code-formula">-2.75</span>).
+                </p>
+              </div>
+            )}
 
-              {/* True False Selector */}
-              {currentQ.question_type === 'TRUE_FALSE' && (
-                <div className="flex gap-4">
-                  {['TRUE', 'FALSE'].map(val => {
-                    const isSelected = (currentAns?.selected_options || []).includes(val);
-                    return (
-                      <button
-                        key={val}
-                        type="button"
-                        className={`px-8 py-4 rounded-xl font-bold text-base border-2 transition ${
-                          isSelected ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-800 border-slate-200 hover:border-slate-300'
-                        }`}
-                        onClick={() => handleSelectOption(val)}
-                      >
-                        {val === 'TRUE' ? 'True' : 'False'}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          ) : (
-            <p className="text-center text-muted">No question selected.</p>
-          )}
+            {/* True / False Selector */}
+            {currentQ?.question_type === 'TRUE_FALSE' && (
+              <div className="flex gap-4 pt-2">
+                {['TRUE', 'FALSE'].map(val => {
+                  const isSelected = (currentAns?.selected_options || []).includes(val);
+                  return (
+                    <button
+                      key={val}
+                      type="button"
+                      className={`px-8 py-4 rounded-xl font-headline-sm text-headline-sm border-2 transition-all shadow-sm ${
+                        isSelected 
+                          ? 'bg-primary text-on-primary border-primary shadow-md' 
+                          : 'bg-surface-container-low hover:bg-surface-container border-outline-variant text-on-surface'
+                      }`}
+                      onClick={() => handleSelectOption(val)}
+                    >
+                      {val === 'TRUE' ? 'True Statement' : 'False Statement'}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
-          {/* Bottom Action Controls */}
-          <div className="cbt-bottom-bar max-w-4xl mx-auto w-full pt-6 mt-6 border-t flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          {/* Question Bottom Action Bar */}
+          <div className="w-full bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
               <button 
                 type="button"
-                className="btn btn-outline text-slate-700 bg-white"
+                className="px-4 py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-2 transition-colors border border-outline-variant"
                 onClick={handleClearResponse}
               >
-                <RotateCcw size={16} className="mr-1.5" />
-                Clear Response
+                <RotateCcw size={16} />
+                <span>Clear Response</span>
               </button>
               <button 
                 type="button"
-                className="btn btn-outline text-purple-700 border-purple-300 bg-purple-50/50 hover:bg-purple-100"
+                className="px-4 py-2.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-label-md text-label-md flex items-center gap-2 transition-colors font-semibold"
                 onClick={handleMarkForReviewAndNext}
               >
-                <Flag size={16} className="mr-1.5 text-purple-600" />
-                Mark for Review & Next
+                <Flag size={16} className="text-amber-700" />
+                <span>Mark for Review & Next</span>
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 ml-auto">
               <button 
                 type="button"
-                className="btn btn-outline bg-white"
+                className="px-4 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-2 transition-colors border border-outline-variant disabled:opacity-40"
                 disabled={currentIndex === 0}
                 onClick={() => setCurrentIndex(currentIndex - 1)}
               >
-                <ChevronLeft size={16} className="mr-1" />
-                Previous
+                <ChevronLeft size={16} />
+                <span>Previous</span>
               </button>
               <button 
                 type="button"
-                className="btn btn-primary bg-indigo-600 hover:bg-indigo-700 font-bold px-6"
+                className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-2 shadow-sm transition-colors font-semibold"
                 onClick={handleSaveAndNext}
               >
                 <span>Save & Next</span>
-                <ChevronRight size={16} className="ml-1" />
+                <ChevronRight size={16} />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Right Sidebar: Indian CBT Question Palette */}
-        <aside className="cbt-sidebar w-80 bg-white border-l flex flex-col justify-between p-4 shadow-sm">
-          <div>
-            {/* Status Legend & Counts */}
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
-              Question Palette Status
-            </h3>
-
-            <div className="grid grid-cols-2 gap-2 text-2xs mb-4">
-              <div className="flex items-center gap-2 p-1.5 rounded bg-emerald-50 border border-emerald-200">
-                <span className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center">
-                  {answeredCount}
-                </span>
-                <span className="font-semibold text-emerald-900">Answered</span>
-              </div>
-
-              <div className="flex items-center gap-2 p-1.5 rounded bg-red-50 border border-red-200">
-                <span className="w-5 h-5 rounded-full bg-red-500 text-white font-bold flex items-center justify-center">
-                  {notAnsweredCount}
-                </span>
-                <span className="font-semibold text-red-900">Not Answered</span>
-              </div>
-
-              <div className="flex items-center gap-2 p-1.5 rounded bg-slate-50 border border-slate-200">
-                <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center">
-                  {notVisitedCount}
-                </span>
-                <span className="font-semibold text-slate-700">Not Visited</span>
-              </div>
-
-              <div className="flex items-center gap-2 p-1.5 rounded bg-purple-50 border border-purple-200">
-                <span className="w-5 h-5 rounded-full bg-purple-600 text-white font-bold flex items-center justify-center">
-                  {markedCount}
-                </span>
-                <span className="font-semibold text-purple-900">Review</span>
-              </div>
+        {/* Right Pane: Question Palette HUD & Navigation Matrix */}
+        <aside className="lg:col-span-4 flex flex-col gap-4">
+          {/* Question Palette Status Legend */}
+          <div className="w-full bg-surface-container-lowest rounded-xl p-5 shadow-sm border border-outline-variant flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <span className="font-headline-sm text-headline-sm text-on-surface font-semibold">Question Palette</span>
+              <span className="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-semibold">
+                {selectedSubject === 'ALL' ? 'Full Assessment' : selectedSubject}
+              </span>
             </div>
 
-            {/* Answered & Marked for Review Special Badge */}
-            {answeredAndMarkedCount > 0 && (
-              <div className="p-1.5 bg-purple-100/70 border border-purple-300 rounded text-2xs mb-3 flex items-center gap-2 text-purple-950 font-semibold">
-                <span className="w-5 h-5 rounded-full bg-purple-700 text-white font-bold flex items-center justify-center relative">
-                  {answeredAndMarkedCount}
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 absolute -top-0.5 -right-0.5 border border-white"></span>
-                </span>
-                <span>Answered & Marked (Evaluated)</span>
+            {/* Color Meaning Matrix (NTA 5-state standard) */}
+            <div className="grid grid-cols-2 gap-2 text-label-sm font-label-sm">
+              <div className="flex items-center gap-2 bg-surface-container-low p-2 rounded-lg border border-outline-variant">
+                <div className="w-6 h-6 rounded bg-secondary text-on-secondary flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  {answeredCount}
+                </div>
+                <span className="text-on-surface truncate">Answered</span>
               </div>
-            )}
+              <div className="flex items-center gap-2 bg-surface-container-low p-2 rounded-lg border border-outline-variant">
+                <div className="w-6 h-6 rounded bg-error text-on-error flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  {notAnsweredCount}
+                </div>
+                <span className="text-on-surface truncate">Not Answered</span>
+              </div>
+              <div className="flex items-center gap-2 bg-surface-container-low p-2 rounded-lg border border-outline-variant">
+                <div className="w-6 h-6 rounded bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  {notVisitedCount}
+                </div>
+                <span className="text-on-surface truncate">Not Visited</span>
+              </div>
+              <div className="flex items-center gap-2 bg-surface-container-low p-2 rounded-lg border border-outline-variant">
+                <div className="w-6 h-6 rounded bg-tertiary-container text-on-tertiary flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  {markedCount}
+                </div>
+                <span className="text-on-surface truncate">Review</span>
+              </div>
+              <div className="col-span-2 flex items-center gap-2 bg-surface-container-low p-2 rounded-lg border border-outline-variant">
+                <div className="relative w-6 h-6 rounded bg-tertiary-container text-on-tertiary flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  <span>{answeredAndMarkedCount}</span>
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-secondary rounded-full border border-surface-container-lowest"></span>
+                </div>
+                <span className="text-on-surface truncate">Answered & Marked for Review</span>
+              </div>
+            </div>
+          </div>
 
-            {/* Question Grid */}
-            <h4 className="text-xs font-bold text-slate-700 mb-2">
-              Choose Question:
-            </h4>
+          {/* Matrix Grid with Jump Navigation */}
+          <div className="w-full bg-surface-container-lowest rounded-xl p-5 shadow-sm border border-outline-variant flex flex-col gap-4">
+            <div className="flex items-center justify-between text-label-sm text-on-surface-variant">
+              <span className="font-semibold">Jump to Question</span>
+              <span className="font-code-formula">Total: {questions.length}</span>
+            </div>
+            
             <div className="grid grid-cols-5 gap-2 max-h-72 overflow-y-auto p-1">
               {questions.map((q, idx) => {
                 const st = answers[q.question_id]?.status || 'NOT_VISITED';
                 const isCurrent = idx === currentIndex;
 
-                let btnClass = 'bg-slate-100 text-slate-700 border-slate-200';
+                let cellBg = 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container';
                 if (st === 'ANSWERED') {
-                  btnClass = 'bg-emerald-600 text-white border-emerald-700';
+                  cellBg = 'bg-secondary text-on-secondary';
                 } else if (st === 'VISITED_UNANSWERED') {
-                  btnClass = 'bg-red-500 text-white border-red-600';
+                  cellBg = 'bg-error text-on-error';
                 } else if (st === 'MARKED_FOR_REVIEW') {
-                  btnClass = 'bg-purple-600 text-white border-purple-700';
+                  cellBg = 'bg-tertiary-container text-on-tertiary';
                 } else if (st === 'ANSWERED_AND_MARKED_FOR_REVIEW') {
-                  btnClass = 'bg-purple-700 text-white border-purple-900 relative';
+                  cellBg = 'bg-tertiary-container text-on-tertiary relative';
+                }
+
+                if (isCurrent) {
+                  cellBg = 'bg-primary text-on-primary ring-2 ring-primary ring-offset-2 scale-105 shadow-md font-bold';
                 }
 
                 return (
                   <button
                     key={q.question_id}
                     type="button"
-                    className={`h-9 rounded-lg font-bold text-xs flex items-center justify-center border-2 transition ${btnClass} ${
-                      isCurrent ? 'ring-2 ring-indigo-500 ring-offset-2 scale-105' : 'hover:opacity-90'
-                    }`}
+                    className={`h-10 rounded-lg font-headline-sm text-headline-sm flex items-center justify-center transition-all ${cellBg}`}
                     onClick={() => setCurrentIndex(idx)}
                   >
                     {idx + 1}
-                    {st === 'ANSWERED_AND_MARKED_FOR_REVIEW' && (
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 absolute top-0.5 right-0.5 border border-white"></span>
+                    {st === 'ANSWERED_AND_MARKED_FOR_REVIEW' && !isCurrent && (
+                      <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-secondary border border-white"></span>
                     )}
                   </button>
                 );
@@ -552,78 +751,95 @@ export function CbtExamView({ examId, onComplete, onExit }) {
             </div>
           </div>
 
-          {/* Final Submit Trigger */}
-          <div className="border-t pt-4 mt-4">
+          {/* Safe Final Exam Submission Action */}
+          <div className="w-full mt-auto">
             <button 
               type="button"
-              className="btn btn-primary btn-block bg-emerald-600 hover:bg-emerald-700 border-none font-bold py-3 text-sm flex items-center justify-center gap-2"
+              className="w-full py-3.5 px-4 rounded-xl bg-error hover:bg-on-error-container text-on-error font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-sm transition-colors font-bold"
               onClick={() => setSubmitModalOpen(true)}
             >
-              <Send size={16} />
-              Submit Assessment
+              <Send size={18} />
+              <span>Submit Examination</span>
             </button>
           </div>
         </aside>
       </div>
 
+      {/* Examination Footer Protocol Status */}
+      <footer className="w-full bg-surface-container-lowest px-6 py-2.5 flex flex-wrap items-center justify-between text-on-surface-variant font-label-sm text-label-sm border-t border-outline-variant z-20">
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1.5 text-secondary font-semibold">
+            <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+            Proctor Security Stream: Active (42 ms)
+          </span>
+          <span className="hidden sm:inline">•</span>
+          <span className="hidden sm:inline font-code-formula">Session: #{examData?.attempt_id || '9842-LIVE'}</span>
+        </div>
+        <div>
+          <span>TeraExam Assessment Engine v4.8 • {institution?.name || 'Academic Command Network'}</span>
+        </div>
+      </footer>
+
       {/* FINAL SUBMIT CONFIRMATION MODAL */}
       {submitModalOpen && (
         <Modal 
           isOpen={submitModalOpen} 
-          title="Submit Examination Confirmation" 
+          title="Submit Examination?" 
           onClose={() => setSubmitModalOpen(false)}
         >
-          <div className="flex flex-col gap-4">
-            <p className="text-sm text-slate-700">
-              Please review your question attempt summary before submitting your examination:
-            </p>
-
-            <div className="card p-3 bg-slate-50 border table-responsive">
-              <table className="table text-xs">
-                <thead>
-                  <tr>
-                    <th>Total Questions</th>
-                    <th className="text-emerald-700">Answered</th>
-                    <th className="text-red-700">Not Answered</th>
-                    <th className="text-purple-700">Marked for Review</th>
-                    <th className="text-slate-600">Not Visited</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="font-bold text-sm">
-                    <td>{questions.length}</td>
-                    <td className="text-emerald-700">{answeredCount + answeredAndMarkedCount}</td>
-                    <td className="text-red-700">{notAnsweredCount}</td>
-                    <td className="text-purple-700">{markedCount + answeredAndMarkedCount}</td>
-                    <td className="text-slate-600">{notVisitedCount}</td>
-                  </tr>
-                </tbody>
-              </table>
+          <div className="flex flex-col gap-4 text-on-surface">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-error-container text-error flex items-center justify-center flex-shrink-0">
+                <AlertTriangle size={24} />
+              </div>
+              <div>
+                <h3 className="font-headline-sm text-headline-sm font-bold">Review Attempt Summary</h3>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">Please verify your responses before final irreversible submission.</p>
+              </div>
             </div>
 
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded text-xs text-amber-900 flex items-start gap-2">
-              <AlertTriangle size={18} className="shrink-0 text-amber-600" />
+            <div className="bg-surface-container-low p-4 rounded-xl flex flex-col gap-2 font-label-md text-label-md border border-outline-variant">
+              <div className="flex justify-between py-1 border-b border-outline-variant">
+                <span className="text-on-surface-variant">Total Questions:</span>
+                <span className="font-bold text-on-surface">{questions.length}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-outline-variant">
+                <span className="text-on-surface-variant">Answered:</span>
+                <span className="font-bold text-secondary">{answeredCount + answeredAndMarkedCount}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-outline-variant">
+                <span className="text-on-surface-variant">Marked for Review:</span>
+                <span className="font-bold text-amber-700">{markedCount + answeredAndMarkedCount}</span>
+              </div>
+              <div className="flex justify-between py-1">
+                <span className="text-on-surface-variant">Unanswered / Skipped:</span>
+                <span className="font-bold text-error">{notAnsweredCount + notVisitedCount}</span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-900 flex items-start gap-2">
+              <Info size={16} className="shrink-0 text-amber-700 mt-0.5" />
               <span>
-                Once submitted, you cannot resume or modify any of your responses. Results will be evaluated and recorded immediately.
+                Once submitted, your answers will be locked, auto-evaluated against the answer key, and your official scorecard will be generated.
               </span>
             </div>
 
-            <div className="flex justify-end gap-2 mt-2">
+            <div className="flex justify-end gap-3 pt-2">
               <button 
                 type="button" 
-                className="btn btn-outline" 
+                className="px-4 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold transition-colors"
                 onClick={() => setSubmitModalOpen(false)}
                 disabled={submitting}
               >
-                Back to Examination
+                Return to Exam
               </button>
               <button 
                 type="button" 
-                className="btn btn-primary bg-emerald-600 hover:bg-emerald-700 border-none font-bold"
+                className="px-6 py-2.5 rounded-lg bg-error hover:bg-on-error-container text-on-error font-label-md text-label-md font-bold shadow-sm transition-colors"
                 onClick={executeSubmission}
                 disabled={submitting}
               >
-                {submitting ? 'Submitting & Evaluating...' : 'Confirm Final Submission'}
+                {submitting ? 'Evaluating & Submitting...' : 'Yes, Final Submit'}
               </button>
             </div>
           </div>
